@@ -1,5 +1,5 @@
 N, M = [int(l) for l in input().split()]
-X = [0] + [int(l) for l in input().split()]
+X = [int(l) for l in ("0 " + input()).split()]
 CY = [0 for l in range(N + 1)]
 
 # ボーナスを整理
