@@ -1,6 +1,7 @@
 from collections import defaultdict
 from heapq import heappop, heappush
 
+
 INF = 10**18
 class Graph(object):
     def __init__(self):
