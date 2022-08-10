@@ -13,5 +13,4 @@ for n in range(1, N):
     # 0付きに9追加か9付きに0追加か09付きに0-9追加
     now[3] = (prev[1] + prev[2] + prev[3] * 10) % MOD
     prev = now
-res = 0
 print(prev[3])
