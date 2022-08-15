@@ -87,7 +87,21 @@ H = len(F)
 W = len(F[0])
 
 res, count = search_shortest_path(F, H, W, 0, 0, 6, 0, '_')
-print('最短距離(SとGのマス含む)', count)
+print('元迷路')
+for h in range(H):
+    mes = ""
+    for w in range(W):
+        if F[h][w] == '#':
+            mes += "[#]"
+        elif F[h][w] == '_':
+            if h == 0 and w == 0:
+                mes += "[S]"
+            elif h == 6 and w == 0:
+                mes += "[G]"
+            else:
+                mes += "[ ]"
+    print(mes)
+print("結果")
 for h in range(H):
     mes = ""
     for w in range(W):
