@@ -118,4 +118,3 @@ for h in range(H):
             else:
                 mes += "[=]"
     print(mes)
-
