@@ -3,13 +3,14 @@ A, B, C, D ,E, F = [int(l) for l in input().split()]
 XY = set()
 MOD = 998244353
 
-# 検索を簡単にするために各X座標に対してY座標を入れる
+# setはタプル型でいけるらしいので行き止まり一覧を作成
 for m in range(M):
     X, Y = [int(l) for l in input().split()]
     XY.add((X,Y))
 
 # 前回の結果
 prev = dict()
+# 初期位置
 prev[0] = 1
 for n in range(N):
     # 今回の結果
