@@ -7,5 +7,4 @@ class Astar(object):
         S : スタート
         G : ゴール
         '''
-        pass
     pass
