@@ -37,8 +37,7 @@ def calc(N, params, MOD, Exc):
     # 前回の結果
     prev = dict()
     # 初期位置
-    prev[0] = 0
-    res = 0
+    prev[0] = 1
     for n in range(N):
         # 今回の結果
         now_ = dict()
@@ -46,12 +45,15 @@ def calc(N, params, MOD, Exc):
         for pk in prev.keys():
             # 前回の(α + β(N + 1) + γ(N + 1)^2)
             # キーからα, β, γを逆算
-            a, b, c, d, e, f = back_calc(pk, N, 6)
+            alpha, beta, gamma = back_calc(pk, N, 3)
             # 現在の状態特定
-            x = a + 2 * b + 3 * c + 4 * d + 5 * e + 6 * f
+            x = params[0] * alpha + params[2] * beta + params[4] * gamma
+            y = params[1] * alpha + params[3] * beta + params[5] * gamma
             # 次のやつのデータを作成する
-            for m in range(6):
-                now_[X + m] = now_[X + m]
+            for m in range(3):
+                if (x + params[m*2], y + params[m*2 + 1]) not in Exc:
+                    now_.setdefault(pk + ((N + 1) ** m), 0)
+                    now_[pk + ((N + 1) ** m)] = (now_[pk + ((N + 1) ** m)] + prev[pk]) % MOD
         prev = now_
     res = 0
     for k in prev:
