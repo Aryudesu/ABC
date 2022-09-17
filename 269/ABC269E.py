@@ -1,17 +1,16 @@
 N = int(input())
-UN = 0
-HN = N - 1
-LN = 0
-WN = N - 1
+UN = 1
+HN = N + 1
+LN = 1
+WN = N + 1
 # 行の特定
 for n in range(10):
     HHN = HN//2
-    print(HHN)
-    A, B, C, D = [1, N, UN, UN + HHN - 1]
+    A, B, C, D = [1, N, UN, UN + HHN]
     print('?', A, B, C + 1, D + 1)
     T = int(input())
     # 上半分が全て埋まってたら
-    if HHN + 1 == T:
+    if HHN == T:
         UN = UN + HHN
     HN = HN - HHN
 RYC = UN + 1
