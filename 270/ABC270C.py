@@ -71,7 +71,4 @@ for n in range(N-1):
     g.add_edge(V, U, 1)
 d = Dijkstra(g, X)
 result = d.shortest_path(Y)
-tmp = []
-for r in result:
-    tmp.append(str(r))
-print(" ".join(tmp))
+print(*result)
