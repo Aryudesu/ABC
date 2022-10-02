@@ -7,7 +7,9 @@ r = N + 1
 while r - l > 1:
     m = (r + l)//2
     # m巻までに持ってるやつ
-    c = len(set(range(1,m+1)) & A)
-    if (c + (N - c)//2) >= m: l = m
-    else: r = m
+    c = len(set(range(1, m+1)) & A)
+    if (c + (N - c)//2) >= m:
+        l = m
+    else:
+        r = m
 print(l)

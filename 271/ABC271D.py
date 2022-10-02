@@ -9,8 +9,8 @@ for k in range(2**N):
     s = 0
     r = []
     for n in range(N):
-        s += ab[n][tmp&1]
-        r.append(RS[tmp&1])
+        s += ab[n][tmp & 1]
+        r.append(RS[tmp & 1])
         tmp = tmp >> 2
         if s > S:
             break
