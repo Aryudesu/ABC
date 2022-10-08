@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+
 class UnionFind():
     """
     Union Find木クラス
@@ -142,7 +143,7 @@ class UnionFind():
         return group_members
 
 
-#呼び出し
+# 呼び出し
 n = 5
 uf = UnionFind(n)
 uf.unite(1, 2)

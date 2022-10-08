@@ -3,6 +3,8 @@ from heapq import heappop, heappush
 
 
 INF = 10**18
+
+
 class Graph(object):
     def __init__(self):
         self.graph = defaultdict(list)
@@ -15,6 +17,7 @@ class Graph(object):
 
     def get_nodes(self):
         return self.graph.keys()
+
 
 class Dijkstra(object):
     def __init__(self, graph, start):
@@ -60,13 +63,14 @@ class Dijkstra(object):
             path.append(node)
             node = self.prev[node]
         return path[::-1]
+
     def __repr__(self):
         return f'Node index:{self.dist} prev:{self.prev}'
 
 
 # (src, dst, weight)
 inputs = [(0, 1, 5), (0, 2, 4), (0, 3, 2), (1, 2, 2), (1, 5, 6), (2, 3, 3),
-         (2, 4, 2), (3, 4, 6), (4, 5, 4)]
+          (2, 4, 2), (3, 4, 6), (4, 5, 4)]
 
 g = Graph()
 for src, dst, weight in inputs:

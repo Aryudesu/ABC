@@ -7,6 +7,7 @@ Nが決まっていて空間計算量に自信が無い場合，
 N+1進法で連想配列型に格納し，データの増加を抑えたら良いなと思っています．
 """
 
+
 def back_calc(num, N, K):
     '''
     N+1進数の計算を逆算します
@@ -53,7 +54,8 @@ def calc(N, params, MOD, Exc):
             for m in range(3):
                 if (x + params[m*2], y + params[m*2 + 1]) not in Exc:
                     now_.setdefault(pk + ((N + 1) ** m), 0)
-                    now_[pk + ((N + 1) ** m)] = (now_[pk + ((N + 1) ** m)] + prev[pk]) % MOD
+                    now_[pk + ((N + 1) ** m)] = (now_[pk +
+                                                      ((N + 1) ** m)] + prev[pk]) % MOD
         prev = now_
     res = 0
     for k in prev:
@@ -69,6 +71,6 @@ MOD = 998244353
 # setはタプル型でいけるらしいので行き止まり一覧を作成
 for m in range(M):
     X, Y = [int(l) for l in input().split()]
-    XY.add((X,Y))
+    XY.add((X, Y))
 
 print(calc(N, params, MOD, XY))
