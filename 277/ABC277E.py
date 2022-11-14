@@ -25,6 +25,9 @@ if K > 0:
     s = {int(l) for l in input().split()}
 now_node = set()
 now_node.add(1*(N + 1) + 1)
+if 1 in s:
+    now_node.add(1)
+    Node[1][0] = 0
 while now_node and Node[-1][0] < 0 and Node[-1][1] < 0:
     new_node = set()
     for node in now_node:
