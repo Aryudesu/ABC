@@ -1,18 +1,22 @@
 N, W = [int(l) for l in input().split()]
-wv = []
+WV = []
 for n in range(N):
-    wv.append([int(l) for l in input().split()])
-knapsack = [[0]*(W + 1) for _ in range(N)]
-knapsack[0][wv[0][0]] = wv[0][1]
-for n in range(1, N):
-    for w in range(W + 1):
-        if knapsack[n-1][w] > knapsack[n][w]:
-            knapsack[n][w] = knapsack[n-1][w]
-        if knapsack[n - 1][w] == 0 and w > 0:
-            continue
-        nw = w + wv[n][0]
-        if nw > W:
-            continue
-        if knapsack[n][nw] < knapsack[n-1][w] + wv[n][1]:
-            knapsack[n][nw] = knapsack[n-1][w] + wv[n][1]
-print(max(knapsack[-1]))
+    WV.append([int(l) for l in input().split()])
+# 重さをキーにする
+knapsack = {0: 0}
+for wv in WV:
+    new_knapsack = dict()
+    for k in knapsack:
+        if new_knapsack.get(k, 0) <= knapsack[k]:
+            new_knapsack[k] = knapsack[k]
+        if k + wv[0] <= W:
+            val = knapsack[k]
+            n_val = new_knapsack.get(k + wv[0], 0)
+            if n_val < val + wv[1]:
+                new_knapsack[k + wv[0]] = val + wv[1]
+    knapsack = new_knapsack
+result = 0
+for k in knapsack:
+    if result < knapsack[k]:
+        result = knapsack[k]
+print(result)
