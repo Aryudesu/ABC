@@ -1,3 +1,6 @@
+import math
+
+
 def is_prime(num, primes):
     for prime in primes:
         if not num % prime:
@@ -14,6 +17,11 @@ def calc_prime(num):
     for i in range(3, num, 2):
         if is_prime(i, primes):
             primes.append(i)
+    t_num = len(primes)
+    approx = num/math.log(num)
+    print(t_num)
+    print(approx)
+    print(100*(t_num - approx)/t_num, "%")
     return primes
 
 
@@ -26,4 +34,5 @@ def input_num():
             pass
 
 
-print(*calc_prime(input_num()))
+result = calc_prime(input_num())
+# print(*result)
