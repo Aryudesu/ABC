@@ -9,6 +9,8 @@ def ssp(A, S):
             if dp[idx]:
                 new_dp[idx] = dp[idx]
             if dp[idx] and idx + a < S + 1:
+                if idx + a == S:
+                    return True
                 new_dp[idx + a] = True
         dp = new_dp
     return dp[S]
