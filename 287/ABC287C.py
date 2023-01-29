@@ -1,6 +1,4 @@
 from collections import defaultdict
-from functools import cmp_to_key
-import bisect
 
 
 class UnionFind():
@@ -145,71 +143,32 @@ class UnionFind():
         return group_members
 
 
-class manhattanMST():
-    def __init__(self, points, inf=10**10):
-        """
-        Parameters
-        ---------------------
-        points: [(x, y), ...]
-        """
-        self.points = points
-        self.inf = inf
-        edges = []
-        n = len(points)
-        ids = [0 for _ in range(n)]
-        for ph in range(4):
-            ids.sort(key=cmp_to_key(self.comp))
-            xv_s = set()
-            for ps in points:
-                xv_s.add(ps[0])
-            xv = list(xv_s)
-            xv.sort()
-            fen = [(-self.inf, -1) for _ in range(n)]
-            for id in ids:
-                xi = int(self.lower(xv, ps[id][0]) - xv[0])
-                ma = (-inf, -1)
-                ma = self.ma_calc(xi, ma, fen)
-                if ma[1] != -1:
-                    edges.append((id, ma[1]))
+N, M = [int(l) for l in input().split()]
+uf = UnionFind(N)
 
-    def ma_calc(xi, ma, fen):
-        i = xi + 1
-        while i > 0:
-            if ma[0] <= fen[i-1][0]:
-                ma = fen[i-1]
-            i -= i & -i
-        return ma
-
-    def lower(a, num):
-        idx = bisect.bisect_left(a, num)
-        return a[idx]
-
-    def comp(x, y):
-        """ソート用比較関数"""
-        ixy = x[0] + x[1]
-        jxy = y[0] + y[1]
-        tmpx = (ixy, x[1])
-        tmpy = (jxy, y[1])
-        if tmpx == tmpy:
-            return 0
-        elif tmpx > tmpy:
-            return -1
-        else:
-            return 1
-
-    def calc():
-        pass
-
-
-# # 呼び出し
-# n = 5
-# uf = UnionFind(n)
-# uf.unite(1, 2)
-# uf.unite(4, 3)
-# uf.unite(4, 5)
-
-# uf.find(1)
-# uf.find(4)
-
-# uf.same(1, 2)
-# uf.same(1, 3)
+graph = [0] * N
+for m in range(M):
+    u, v = [int(l) for l in input().split()]
+    uf.unite(u, v)
+    graph[u-1] += 1
+    graph[v-1] += 1
+roots = len(uf.roots()) - 1
+o = 0
+t = 0
+other = 0
+for g in graph:
+    if g == 1:
+        o += 1
+    elif g == 2:
+        t += 1
+    else:
+        other += 1
+# |i - j| >= 2を満たすものが存在する
+if roots != 1:
+    print("No")
+elif other > 0:
+    print("No")
+elif o == 2 and t == N - 2:
+    print("Yes")
+else:
+    print("No")
