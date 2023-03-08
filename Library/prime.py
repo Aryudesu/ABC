@@ -30,5 +30,6 @@ def calc_prime(num):
     return primes
 
 
-N = 1000000
+N = 17600
 result = calc_prime(N)
+print(*result)

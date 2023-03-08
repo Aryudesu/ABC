@@ -25,5 +25,6 @@ def calc(N):
     return primes
 
 
-N = 1000000
+N = 20240101
 result = calc(N)
+print(len(result))
