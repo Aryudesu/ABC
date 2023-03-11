@@ -1,15 +1,16 @@
-def is_prime(N, prime):
-    for p in prime:
-        if p*p > N:
-            return True
-        if N % p == 0:
-            return False
-    return True
+def calc_prime(N):
+    result = [True] * (N + 1)
+    primes = [2]
+    for i in range(3, N + 1, 2):
+        if not result[i]:
+            continue
+        primes.append(i)
+        idx = 3
+        while idx * i <= N:
+            result[idx * i] = False
+            idx += 2
+    return primes
 
 
-N = int(input())
-prime = [2]
-for n in range(3, N + 1):
-    if is_prime(n, prime):
-        prime.append(n)
-print(*prime)
+result = calc_prime(int(input()))
+print(*result)
