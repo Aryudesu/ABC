@@ -14,9 +14,8 @@ class UnionFind():
         """ノードxの根を見つける"""
         if self.root[x] < 0:
             return x
-        else:
-            self.root[x] = self.find(self.root[x])
-            return self.root[x]
+        self.root[x] = self.find(self.root[x])
+        return self.root[x]
 
     def unite_root(self, x, y):
         """グループの統合を行いグループの統合先と統合元を返却する"""
@@ -45,7 +44,7 @@ class UnionFind():
             self.unite(dat[0], dat[1])
 
     def unite_same(self, x, y):
-        """同じグループに属するか判定を行い，属さなければ統合"""
+        """統合前に同じグループに属するかの判定"""
         a, b = self.unite_root(x, y)
         return a == b
 
