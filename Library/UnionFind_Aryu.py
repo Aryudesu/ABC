@@ -36,11 +36,11 @@ class UnionFind():
             return y, x
 
     def unite(self, x, y):
-        """木の併合"""
+        """木の統合"""
         self.unite_root(x, y)
 
     def multi_unite(self, xy):
-        """複数併合"""
+        """複数統合"""
         for dat in xy:
             self.unite(dat[0], dat[1])
 
