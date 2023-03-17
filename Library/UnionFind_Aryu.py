@@ -78,7 +78,6 @@ class UnionFind():
 
 # 呼び出し
 N, M = [int(l) for l in input().split()]
-XY = [[int(l) for l in input().split()] for _ in range(M)]
 uf = UnionFind(N)
-uf.multi_unite(XY)
+uf.multi_unite([[int(l) for l in input().split()] for _ in range(M)])
 print(uf.max_tree_size())
