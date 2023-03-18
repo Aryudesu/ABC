@@ -58,7 +58,7 @@ class UnionFind():
 
     def roots(self):
         """根のノードを取得"""
-        return [i for i, x in enumerate(self.root) if x < 0 and i > 0]
+        return [i for i, x in enumerate(self.root) if x < 0]
 
     def max_tree_size(self):
         """最大の木のサイズを取得"""
@@ -78,6 +78,13 @@ class UnionFind():
 
 # 呼び出し
 N, M = [int(l) for l in input().split()]
+result = []
 uf = UnionFind(N)
-uf.multi_unite([[int(l) for l in input().split()] for _ in range(M)])
-print(uf.max_tree_size())
+for m in range(M):
+    p, a, b = [int(l) for l in input().split()]
+    if p == 0:
+        x, y = uf.unite_root(a, b)
+    else:
+        result.append("Yes" if uf.same(a, b) else "No")
+for r in result:
+    print(r)
