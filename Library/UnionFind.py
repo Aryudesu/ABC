@@ -64,10 +64,10 @@ class UnionFind():
         if(x == y):
             return
         elif(self.rank[x] > self.rank[y]):
-            self.root[x] += self.root[y]
+            self.rank[x] += self.rank[y]
             self.root[y] = x
         else:
-            self.root[y] += self.root[x]
+            self.rank[y] += self.rank[x]
             self.root[x] = y
             if(self.rank[x] == self.rank[y]):
                 self.rank[y] += 1

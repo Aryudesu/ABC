@@ -1,7 +1,9 @@
+#include <stdio.h>
+
 int main() {
     int N, idx, min_idx = 0;
-    int A[100];
-    char S[100][10];
+    int A[101];
+    char S[101][11];
     scanf("%d", &N);
     for (idx = 0; idx < N; idx++) {
         scanf("%s %d", S[idx], &A[idx]);
