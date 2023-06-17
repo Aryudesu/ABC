@@ -5,5 +5,9 @@
     "editor.formatOnType": true,
     "[python]": {
         "editor.defaultFormatter": "ms-python.python"
+    },
+    "files.associations": {
+        "stdlib.h": "c",
+        "stdio.h": "c"
     }
 }
