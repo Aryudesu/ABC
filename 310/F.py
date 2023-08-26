@@ -1,5 +1,3 @@
-import math
-
 mod = 998244353
 
 
@@ -22,11 +20,10 @@ data[0] = 1
 for a in A:
     new_data = [0] * 11
     num = a if a < 10 else 10
-    for n in range(1, num + 1):
+    for n in range(num + 1):
         for m in range(11):
             if n + m <= 10:
-                new_data[n + m] += data[m]
-    new_data[0] = data[0] * a
+                new_data[n + m] += data[m] + data[n] * (a-n)
     data = new_data
     print(data)
 print(calc_div(data[10], A))
