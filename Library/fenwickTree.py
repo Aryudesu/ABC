@@ -11,22 +11,22 @@ class fenwickTree:
         self.__n = n
         self.__data = [0] * n
 
-    """配列を初期設定します"""
     def set(self, v):
+        """配列を初期設定します"""
         n = len(v)
         for i in range(n):
             self.add(i, v[i])
 
-    """a[p] += xを行います"""
     def add(self, p, x):
+        """a[p] += xを行います"""
         assert 0 <= p and p < self.__n
         p += 1
         while p <= self.__n:
             self.__data[p-1] += x
             p += p & -p
 
-    """a[l] + a[l+1] + ... + a[r - 1]を返却します"""
     def sum(self, l, r):
+        """a[l] + a[l+1] + ... + a[r - 1]を返却します"""
         assert 0 <= l and l <= r and r <= self.__n
         return self.__sum(r) - self.__sum(l)
 

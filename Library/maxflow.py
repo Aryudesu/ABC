@@ -28,6 +28,8 @@ class simpleQueue:
 
 
 class maxFlow:
+    """maxflowクラス"""
+
     class __edge:
         def __init__(self, to, rev, cap):
             self.to = to
@@ -51,8 +53,8 @@ class maxFlow:
         for i in range(n):
             self.__g.append([])
 
-    """frmからtoへ最大容量cap，流量0の変を追加し，何番目に追加された辺かを返す．"""
     def add_edge(self, frm, to, cap):
+        """frmからtoへ最大容量cap，流量0の変を追加し，何番目に追加された辺かを返す．"""
         assert 0 <= frm and frm < self.__n
         assert 0 <= to and to < self.__n
         m = len(self.__pos)
@@ -65,24 +67,24 @@ class maxFlow:
         self.__g[to].append(self.__edge(frm, from_id, 0))
         return m
 
-    """今の内部の辺の状態を返す．"""
     def get_edge(self, i):
+        """今の内部の辺の状態を返す．"""
         m = len(self.__pos)
         assert 0 <= i and i < m
         _e = self.__g[self.__pos[i][0]][self.__pos[i][1]]
         _re = self.__g[_e.to][_e.rev]
         return self.edge(self.__pos[i][0], _e.to, _e.cap + _re.cap, _re.cap)
 
-    """今の内部の辺の状態を返す．"""
     def edges(self):
+        """今の内部の辺の状態を返す．"""
         m = len(self.__pos)
         result = []
         for i in range(m):
             result.append(self.get_edge(i))
         return result
 
-    """i番目に追加された辺の容量，流量をnew_cap, new_flowに変更する．"""
     def change_edge(self, i, new_cap, new_flow):
+        """i番目に追加された辺の容量，流量をnew_cap, new_flowに変更する．"""
         m = len(self.__pos)
         assert 0 <= i and i < m
         assert 0 <= new_flow and new_flow <= new_cap
@@ -91,10 +93,10 @@ class maxFlow:
         _e.cap = new_cap - new_flow
         _re.cap = new_flow
 
-    """
-    頂点sからtへ流量flow_limitに達するまで流せる限り流し，流せた量を返す．
-    """
     def flow(self, s, t, flow_limit = 10 ** 10):
+        """
+        頂点sからtへ流量flow_limitに達するまで流せる限り流し，流せた量を返す．
+        """
         assert 0 <= s and s < self.__n
         assert 0 <= t and t < self.__n
         assert s != t

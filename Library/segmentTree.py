@@ -6,19 +6,19 @@ class segmentTree:
     __data = []
     __e = 1
 
-    """データ更新"""
     def __update(self, k):
+        """データ更新"""
         self.__data[k] = self.__func(self.__data[2 * k], self.__data[2 * k + 1])
 
-    """ビット上げ"""
     def bit_ceil(self, n):
+        """ビット上げ"""
         x = 1
         while x < n:
             x *= 2
         return x
 
-    """ビットの右側の0の個数を調べる"""
     def countr_zero(self, n):
+        """ビットの右側の0の個数を調べる"""
         if n == 0:
             return 0
         tmp = n
@@ -28,8 +28,8 @@ class segmentTree:
             res += 1
         return res
 
-    """コンストラクタ"""
     def __init__(self, v, e, f) -> None:
+        """コンストラクタ"""
         self.__e = e
         self.__func = f
         self.__n = len(v)
@@ -41,21 +41,21 @@ class segmentTree:
         for i in range(self.__size - 1, 0, -1):
             self.__update(i)
 
-    """データをセット"""
     def set(self, p, x):
+        """データをセット"""
         assert 0 <= p and p < self.__n
         p += self.__size
         self.__data[p] = x
         for i in range(1, self.__log + 1):
             self.__update(p >> i)
 
-    """データ取得"""
     def get(self, p):
+        """データ取得"""
         assert 0 <= p and p < self.__n
         return self.__data[p + self.__size]
 
-    """相乗取得"""
     def prod(self, l, r):
+        """相乗取得"""
         assert 0 <= l and l <= r and r <= self.__n
         sml = self.__e
         smr = self.__e
@@ -72,12 +72,12 @@ class segmentTree:
             r >>= 1
         return self.__func(sml, smr)
 
-    """すべての相乗取得"""
     def all_prod(self):
+        """すべての相乗取得"""
         return self.__data[1]
 
-    """二分探索"""
     def max_right(self, l, f):
+        """二分探索"""
         assert 0 <= l and l <= self.__n
         assert f(self.__e)
         if l == self.__n:
@@ -100,8 +100,8 @@ class segmentTree:
                 break
         return self.__n
 
-    """二分探索"""
     def min_left(self, r, f):
+        """二分探索"""
         assert 0 <= r and r <= self.__n
         assert f(self.__e)
         if r == 0:
