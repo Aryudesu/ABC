@@ -1,13 +1,3 @@
-target = 0
-
-# 積の計算
-def prod_func(x, y):
-    return max([x, y])
-
-# ソート用
-def f_func(v):
-    return v < target
-
 # セグ木
 class segmentTree:
     __n = 0
@@ -132,6 +122,17 @@ class segmentTree:
             if (r & -r) == r:
                 break
         return 0
+
+
+target = 0
+
+# 積の計算
+def prod_func(x, y):
+    return max([x, y])
+
+# ソート用
+def f_func(v):
+    return v < target
 
 N, Q = [int(l) for l in input().split()]
 A = [int(l) for l in input().split()]
