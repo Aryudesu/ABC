@@ -1,32 +1,21 @@
-import itertools
+def t2num(S, T):
+    tDat = T.split("_")
+    count = 0
+    result = 0
+    for i in range(len(tDat)):
+        td = tDat[i]
+        tmp = S.get(td)
+        if tmp:
+            result = tmp
+    return result
+
 
 N, M = [int(l) for l in input().split()]
-S = []
-T = dict()
-
-
-def saiki(S, num):
-    pass
-
+S = dict()
+T = []
 
 for n in range(N):
-    S.append(input())
+    S[n] = input()
 
 for m in range(M):
-    Ti = input()
-    if Ti[0] == '_':
-        continue
-    c = 0
-    for t in Ti:
-        if t == '_':
-            c += 1
-    tmp3 = Ti.replace('_', '')
-    tmp = T.setdefault(tmp3, dict())
-    tmp2 = tmp.setdefault(c, 0)
-    tmp[c] = tmp2 + 1
-
-for pn in itertools.permutations(S):
-    tmp = ''.join(pn)
-    L = 16 - len(tmp)
-    for l in range(1, L + 1):
-        pass
+    T.append(input())
