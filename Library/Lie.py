@@ -1,7 +1,7 @@
 class LieGroup:
-    """行列"""
+    """行列プログラム Edited By Aryu"""
 
-    def __init__(self, H, W) -> None:
+    def __init__(self, H=1, W=1) -> None:
         """H行W列の零行列を生成します"""
         self.W = W
         self.H = H
@@ -12,12 +12,15 @@ class LieGroup:
             self.data.append(tmp)
 
     def setArray(self, arr):
+        self.H = len(arr)
+        self.W = len(arr[0])
+        self.data = []
         """行列を設定します"""
-        assert len(arr) == self.H
         for h in range(self.H):
-            assert len(self.data[h]) == len(arr[h])
+            tmp = []
             for w in range(self.W):
-                self.data[h][w] = arr[h][w]
+                tmp.append(arr[h][w])
+            self.data.append(tmp)
 
     def setData(self, h, w, x):
         """h行w列に値xを設定します"""
@@ -42,7 +45,20 @@ class LieGroup:
             return self.dotTT(dat)
         raise Exception()
 
-    def dotNN(self, a):
+    def modDot(self, dat, M):
+        """行列同士の積をmod Mで計算します"""
+        result = []
+        if not self.T and not dat.T:
+            return self.dotNN(dat, M)
+        if self.T and not dat.T:
+            return self.dotTN(dat, M)
+        if not self.T and dat.T:
+            return self.dotNT(dat, M)
+        if self.T and dat.T:
+            return self.dotTT(dat, M)
+        raise Exception()
+
+    def dotNN(self, a, M = None):
         assert self.W == a.H
         assert not self.T and not a.T
         result = LieGroup(self.H, a.W)
@@ -51,10 +67,12 @@ class LieGroup:
                 tmp = 0
                 for t in range(self.W):
                     tmp += self.data[h][t] * a.data[t][w]
+                    if not M is None:
+                        tmp = tmp % M
                 result.setData(h, w, tmp)
         return result
 
-    def dotTN(self, a):
+    def dotTN(self, a, M = None):
         assert self.H == a.H
         assert self.T and not a.T
         result = LieGroup(self.W, a.W)
@@ -63,10 +81,12 @@ class LieGroup:
                 tmp = 0
                 for t in range(self.H):
                     tmp += self.data[t][h] * a.data[t][w]
+                    if not M is None:
+                        tmp = tmp % M
                 result.setData(h, w, tmp)
         return result
 
-    def dotNT(self, a):
+    def dotNT(self, a, M = None):
         assert self.W == a.W
         assert not self.T and a.T
         result = LieGroup(self.H, a.H)
@@ -75,10 +95,12 @@ class LieGroup:
                 tmp = 0
                 for t in range(self.W):
                     tmp += self.data[h][t] * a.data[w][t]
+                    if not M is None:
+                        tmp = tmp % M
                 result.setData(h, w, tmp)
         return result
 
-    def dotTT(self, a):
+    def dotTT(self, a, M = None):
         assert self.H == a.W
         assert self.T and a.T
         result = LieGroup(self.W, a.H)
@@ -87,6 +109,8 @@ class LieGroup:
                 tmp = 0
                 for t in range(self.W):
                     tmp += self.data[t][h] * a.data[w][t]
+                    if not M is None:
+                        tmp = tmp % M
                 result.setData(h, w, tmp)
         return result
 
@@ -166,12 +190,18 @@ class LieGroup:
             tmp = tmp.dot(tmp)
         return result
 
-lie1 = LieGroup(1, 5)
-lie2 = LieGroup(1, 5)
-dat1 = [[1, 2, 3, 4, 5]]
-dat2 = [[1, 2, 3, 4, 5]]
-lie1.setArray(dat1)
-lie2.setArray(dat2)
-lie2.trans()
-res = lie1.dot(lie2)
-res.draw()
+    def pow(self, a):
+        return self**a
+
+    def modPow(self, a, M):
+        """a乗をmod Mで計算します"""
+        assert self.H == self.W
+        tmpA = a
+        tmp = self.deepCopy()
+        result = self.getI(self.W)
+        while tmpA:
+            if tmpA & 1:
+                result = result.modDot(tmp, M)
+            tmpA >>= 1
+            tmp = tmp.modDot(tmp, M)
+        return result

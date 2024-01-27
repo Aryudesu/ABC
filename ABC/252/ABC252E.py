@@ -62,7 +62,7 @@ class Dijkstra(object):
             path.append(node)
             node = self.prev[node]
         return path[::-1]
-    
+
     def prev_path(self, node):
         """
         startからgoalまでの最短経路についてnodeに至る1つ前の値
@@ -74,14 +74,17 @@ class Dijkstra(object):
 
 
 # (src, dst, weight)
-inputs = [(0, 1, 5), (0, 2, 4), (0, 3, 2), (1, 2, 2), (1, 5, 6), (2, 3, 3),
-          (2, 4, 2), (3, 4, 6), (4, 5, 4)]
-
+N, M = [int(l) for l in input().split()]
 g = Graph()
-for src, dst, weight in inputs:
-    g.add_edge(src, dst, weight)
-    g.add_edge(dst, src, weight)
-
+roadMemo = dict()
+for i in range(M):
+    a, b, c = [int(l) for l in input().split()]
+    g.add_edge(a - 1, b - 1, c)
+    g.add_edge(b - 1, a - 1, c)
+    roadMemo[(a-1, b-1)] = i + 1
+    roadMemo[(b-1, a-1)] = i + 1
 d = Dijkstra(g, 0)
-print('最短経路: {}'.format(d.shortest_path(5)))
-print('最短距離: {}'.format(d.shortest_distance(5)))
+result = []
+for i in range(2, N + 1):
+    result.append(roadMemo.get((d.prev_path(i-1), i-1)))
+print(*result)
