@@ -11,16 +11,15 @@ class LieGroup:
             tmp = [0] * W
             self.data.append(tmp)
 
+    def makeArray(self, a, H, W):
+        """H*W配列を作成します"""
+        return [[a] * W for _ in range(H)]
+
     def setArray(self, arr):
+        """行列を設定します"""
         self.H = len(arr)
         self.W = len(arr[0])
-        self.data = []
-        """行列を設定します"""
-        for h in range(self.H):
-            tmp = []
-            for w in range(self.W):
-                tmp.append(arr[h][w])
-            self.data.append(tmp)
+        self.data = arr
 
     def setData(self, h, w, x):
         """h行w列に値xを設定します"""
@@ -205,3 +204,31 @@ class LieGroup:
             tmpA >>= 1
             tmp = tmp.modDot(tmp, M)
         return result
+
+    def Ydet(self, M):
+        """余因子展開で行列式を計算します"""
+        size = len(M)
+        if size == 1:
+            return M[0][0]
+        T = self.makeArray(0, size - 1, size - 1)
+        result = 0
+        for i in range(size):
+            for x in range(size-1):
+                for y in range(size-1):
+                    tmp = x + 1 if x >= i else x
+                    T[y][x] = M[y+1][tmp]
+            sign = 1 if i % 2 == 0 else -1
+            result += M[0][i] * sign * self.Ydet(T)
+        return result
+
+    def det(self):
+        """行列式計算"""
+        assert self.H == self.W
+        return self.Ydet(self.data)
+
+data = [[1, 0, 0, 6], [0, 2, 3, 0], [5, 3, 0, 1], [0, 0, 5, 2]]
+lg = LieGroup()
+lg.setArray(data)
+lg.draw()
+print()
+lg.modPow(1000000000, 10).draw()
