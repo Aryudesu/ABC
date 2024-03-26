@@ -227,7 +227,6 @@ class LieGroup:
         return self.Ydet(self.data)
 
     def inverse(self):
-        """逆行列を計算します"""
         assert self.H == self.W
         assert self.det() != 0
         N = self.H
@@ -237,6 +236,7 @@ class LieGroup:
         a = []
         for i in range(N):
             a.append([self.data[i][j] for j in range(N)])
+
         for i in range(N):
             buf = 1/a[i][i]
             for j in range(N):
@@ -252,8 +252,43 @@ class LieGroup:
         res.setArray(result)
         return res
 
-data = [[1, 0, 0, 6], [0, 2, 3, 0], [5, 3, 0, 1], [0, 0, 5, 2]]
-lg = LieGroup()
-lg.setArray(data)
-res = lg.inverse()
-res.draw()
+def f(N, x, param):
+    result = 0
+    for n in range(N):
+        result += param[n] * (x ** n)
+    return result
+
+def drawResult(N, param):
+    res = []
+    for n in range(N):
+        res.append(str(param[n]) + f"x^{n}")
+    print(" + ".join(res))
+
+
+Data = [[7.60, 81], [6.92, 58], [6.59, 54], [5.76, 44], [4.48, 32], [4.19, 29]]
+N = len(Data)
+leftData = []
+rightData = []
+for n in range(N):
+    x, y = Data[n]
+    rightData.append([y])
+    tmp = []
+    for m in range(N):
+        tmp.append(x ** m)
+    leftData.append(tmp)
+left = LieGroup(6, 6)
+left.setArray(leftData)
+right = LieGroup(6, 1)
+right.setArray(rightData)
+left_inv = left.inverse()
+ans = left_inv.dot(right)
+result = []
+for n in range(N):
+    result.append(ans.getElem(n, 0))
+print(result)
+for dat in Data:
+    x, t = dat
+    y = f(N, x, result)
+    print(y, t)
+
+drawResult(N, result)
