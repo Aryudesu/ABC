@@ -1,5 +1,5 @@
-N = 20250101
-print((N-1)//4)
+N = 202501
+# print((N-1)//4)
 result = []
 for i in range(N):
     if i ** 2 > N:

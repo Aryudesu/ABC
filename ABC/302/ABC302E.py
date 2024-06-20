@@ -1,31 +1,26 @@
 N, Q = [int(l) for l in input().split()]
-# data = {n + 1 for n in range(N)}
 graph = dict()
-ny_node = set()
+node = {i for i in range(N)}
 for q in range(Q):
-    query = [int(l) for l in input().split()]
-    if query[0] == 1:
-        tmp = graph.get(query[1])
-        if tmp is None:
-            tmp = set()
-        tmp.add(query[2])
-        graph[query[1]] = tmp
-        tmp = graph.get(query[2])
-        if tmp is None:
-            tmp = set()
-        tmp.add(query[1])
-        graph[query[2]] = tmp
-        if query[1] in ny_node:
-            ny_node.remove(query[1])
-        if query[2] in ny_node:
-            ny_node.remove(query[2])
-    elif query[0] == 2:
-        graph[query[1]] = set()
-        ny_node.add(query[1])
-    else:
-        raise Exception()
-    res = set()
-    for g in graph:
-        res = res | graph.get(g)
-    print(res - ny_node)
-    print(N - len(res - ny_node))
+    num, *query = [int(l) for l in input().split()]
+    if num == 1:
+        u, v = query[0] - 1, query[1] - 1
+        tmp = graph.get(u, set())
+        tmp.add(v)
+        graph[u] = tmp
+        tmp = graph.get(v, set())
+        tmp.add(u)
+        graph[v] = tmp
+        node.discard(u)
+        node.discard(v)
+    elif num == 2:
+        v = query[0] - 1
+        tmp = graph.get(v, set())
+        for t in tmp:
+            graph[t].discard(v)
+            if len(graph.get(t, set())) == 0:
+                node.add(t)
+        graph[v] = set()
+        node.add(v)
+    # print(node)
+    print(len(node))

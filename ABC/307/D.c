@@ -7,7 +7,6 @@ int main() {
     int idx = 0, i;
     scanf("%d", &N);
     scanf("%s", data);
-    printf("%s\n", data);
     for (i = 0; i < N;i++){
         result[idx] = data[i];
     }
