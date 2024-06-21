@@ -22,5 +22,4 @@ for q in range(Q):
                 node.add(t)
         graph[v] = set()
         node.add(v)
-    # print(node)
     print(len(node))
