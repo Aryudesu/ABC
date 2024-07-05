@@ -162,8 +162,17 @@ class modQ:
     def __pow__(self, other):
         """指数"""
         if type(other) is int:
-            new_numer = pow(self.numer, other, self.MOD)
-            new_denom = pow(self.denom, other, self.MOD)
+            if other > 0:
+                new_numer = pow(self.numer, other, self.MOD)
+                new_denom = pow(self.denom, other, self.MOD)
+            elif other == 0:
+                new_numer = 1
+                new_denom = 1
+            else:
+                tmp_numer = self.inverseMod(self.denom, self.MOD)
+                tmp_denom = self.inverseMod(self.numer, self.MOD)
+                new_numer = pow(tmp_numer, other, self.MOD)
+                new_denom = pow(tmp_denom, other, self.MOD)
             return modQ(new_numer, new_denom)
         raise Exception()
 
