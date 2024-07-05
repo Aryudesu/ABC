@@ -1,4 +1,4 @@
-class LieGroup:
+class Matrix:
     """行列プログラム Edited By Aryu"""
 
     def __init__(self, H=1, W=1) -> None:
@@ -60,7 +60,7 @@ class LieGroup:
     def dotNN(self, a, M = None):
         assert self.W == a.H
         assert not self.T and not a.T
-        result = LieGroup(self.H, a.W)
+        result = Matrix(self.H, a.W)
         for h in range(self.H):
             for w in range(a.W):
                 tmp = 0
@@ -74,7 +74,7 @@ class LieGroup:
     def dotTN(self, a, M = None):
         assert self.H == a.H
         assert self.T and not a.T
-        result = LieGroup(self.W, a.W)
+        result = Matrix(self.W, a.W)
         for h in range(self.W):
             for w in range(a.W):
                 tmp = 0
@@ -88,7 +88,7 @@ class LieGroup:
     def dotNT(self, a, M = None):
         assert self.W == a.W
         assert not self.T and a.T
-        result = LieGroup(self.H, a.H)
+        result = Matrix(self.H, a.H)
         for h in range(self.H):
             for w in range(a.H):
                 tmp = 0
@@ -102,7 +102,7 @@ class LieGroup:
     def dotTT(self, a, M = None):
         assert self.H == a.W
         assert self.T and a.T
-        result = LieGroup(self.W, a.H)
+        result = Matrix(self.W, a.H)
         for h in range(self.W):
             for w in range(a.H):
                 tmp = 0
@@ -131,7 +131,7 @@ class LieGroup:
 
     def deepCopy(self):
         """深いコピーを生成します"""
-        result = LieGroup(self.H, self.W)
+        result = Matrix(self.H, self.W)
         result.setArray(self.data)
         return result
 
@@ -143,7 +143,7 @@ class LieGroup:
         """和を計算します"""
         assert self.H == a.H
         assert self.W == a.W
-        result = LieGroup(self.H, self.W)
+        result = Matrix(self.H, self.W)
         for h in range(self.H):
             for w in range(self.W):
                 result.data[h][w] = self.data[h][w] + a.data[h][w]
@@ -153,7 +153,7 @@ class LieGroup:
         """差を計算します"""
         assert self.H == a.H
         assert self.W == a.W
-        result = LieGroup(self.H, self.W)
+        result = Matrix(self.H, self.W)
         for h in range(self.H):
             for w in range(self.W):
                 result.data[h][w] = self.data[h][w] - a.data[h][w]
@@ -163,7 +163,7 @@ class LieGroup:
         """アダマール積を計算します"""
         assert self.H == a.H
         assert self.W == a.W
-        result = LieGroup(self.H, self.W)
+        result = Matrix(self.H, self.W)
         for h in range(self.H):
             for w in range(self.W):
                 result.data[h][w] = self.data[h][w] * a.data[h][w]
@@ -171,7 +171,7 @@ class LieGroup:
 
     def getI(self, N):
         """N*N単位行列を取得します"""
-        result = LieGroup(N, N)
+        result = Matrix(N, N)
         for n in range(N):
             result.setData(n, n, 1)
         return result
@@ -248,12 +248,17 @@ class LieGroup:
                     for k in range(N):
                         a[j][k] -= a[i][k] * buf
                         result[j][k] -= result[i][k] * buf
-        res = LieGroup(N, N)
+        res = Matrix(N, N)
         res.setArray(result)
         return res
 
-data = [[1, 0, 0, 6], [0, 2, 3, 0], [5, 3, 0, 1], [0, 0, 5, 2]]
-lg = LieGroup()
+# *** Example (ABC357 D) ***
+S = input()
+L = len(S)
+N = int(S)
+MOD = 998244353
+data = [[10**L, N], [0, 1]]
+lg = Matrix()
 lg.setArray(data)
-res = lg.inverse()
-res.draw()
+lg2 = lg.modPow(N, MOD)
+print(lg2.getElem(0, 1))
