@@ -7,22 +7,20 @@ def calc10(num):
     return result
 
 
-data = []
-dataSet = set()
+dataSet = dict()
 N, K = [int(l) for l in input().split()]
 MOD = 10**5
 num = N
 count = 0
 while count < K:
-    next = (num + calc10(num)) % MOD
-    if next in dataSet:
+    if num in dataSet:
         break
-    data.append(next)
-    dataSet.add(next)
+    dataSet[num] = count
+    num = (num + calc10(num)) % MOD
     count += 1
-    num = next
+result = 0
 if count == K:
-    print(data[-1])
+    result = num
 else:
-    base = data.index(next)
-    print(data[(K - base) % (count - base) + base - 1])
+    print(count)
+    print(num)
