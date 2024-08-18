@@ -1,0 +1,1 @@
+print("oNYes"[3::1 - 2 * ("t\nsw"in open(0).read()[:-6])])

@@ -14,6 +14,4 @@ A = [int(l) for l in input().split()]
 B = [int(l) for l in input().split()]
 A.sort(reverse=True)
 B.sort(reverse=True)
-Anum = 0
-Bnum = 0
 print(min([calc(A, X), calc(B, Y)]))
