@@ -252,10 +252,13 @@ class Matrix:
         res.setArray(result)
         return res
 
-N = int(input())
-MOD = 10**9
-data = [[1, 1], [1, 0]]
-lg = Matrix()
-lg.setArray(data)
-lg2 = lg.modPow(N, MOD)
-print(lg2.getElem(0, 1))
+T = Matrix()
+T.setArray([[1, 1], [0, 1]])
+S = Matrix()
+S.setArray([[0, -1], [1, 0]])
+TInv = Matrix()
+TInv.setArray([[1, -1], [0, 1]])
+U = T.dot(T).dot(S).dot(T)
+print(U.data)
+V = U.pow(5)
+print(V.data)
