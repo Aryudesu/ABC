@@ -1,59 +1,48 @@
 from atcoder.dsu import DSU
 
 N, Q = [int(l) for l in input().split()]
-# data[代表] = [色, 要素数, 最小, 最大]
-data = dict()
-# color[色] = マスの数
-color = dict()
+# data[代表] = [色, 最小, 最大]
+color = [[n, n, n] for n in range(N)]
+    # color[色] = マスの数
+num = [1] * N
+
+def update(dsu, x, c):
+    # xの代表点取得
+    x_l = dsu.leader(x)
+    xco, xmi, xma = color[x_l]
+    if xco == c:
+        return
+
+    x_num = xma - xmi + 1
+    num[xco] -= x_num
+
+    newmi, newma = xmi, xma
+    if xmi > 0:
+        l_l = dsu.leader(xmi - 1)
+        lco, lmi, lma = color[l_l]
+        if lco == c:
+            newmi = lmi
+            dsu.merge(x, xmi - 1)
+    if xma < N - 1:
+        r_l = dsu.leader(xma + 1)
+        rco, rmi, rma = color[r_l]
+        if rco == c:
+            newma = rma
+            dsu.merge(x, xma + 1)
+    n_l = dsu.leader(x)
+    color[n_l] = [c, newmi, newma]
+    num[c] += x_num
+
+
 dsu = DSU(N)
 result = []
-for q in range(Q):
+for _ in range(Q):
     query = [int(l) - 1 for l in input().split()]
     if query[0] == 0:
-        n, x, c = query
-        # 代表元取得
-        leader = dsu.leader(x)
-        # その範囲のデータ取得
-        leader_data = data.get(leader, [leader, 1, leader, leader])
-        # 現在の色の代表元取得後に代表元から削除
-        now_color = leader_data[0]
-        color[now_color] = color.get(now_color, 1) - leader_data[1]
-        color[c] = color.get(c, 1) + leader_data[1]
-        # 塗り替え予定の代表元取得
-        newcolor_leaders:set = color.get(c)
-        # 色を塗り替える
-        new_data = [c, leader_data[1], leader_data[2], leader_data[3]]
-        new_leader = leader
-        if leader_data[2] > 0:
-            left = leader_data[2] - 1
-            left_leader = dsu.leader(left)
-            left_data = data.get(left_leader, [left_leader, 1, left_leader, left_leader])
-            if left_data[0] == new_data[0]:
-                # 代表元から削除
-                left_color = left_data[0]
-                color[left_color] = color.get(left_color, 1) - left_data[1]
-                color[c] = color.get(c, 1) + left_data[1]
-                new_data[2] = left_data[2]
-                new_data[1] += left_data[1]
-                dsu.merge(leader, left_leader)
-                new_leader = dsu.leader(leader)
-        if leader_data[3] < N - 1:
-            right = leader_data[3] + 1
-            right_leader = dsu.leader(right)
-            right_data = data.get(right_leader, [right_leader, 1, right_leader, right_leader])
-            if right_data[0] == new_data[0]:
-                # 代表元から削除
-                right_color = right_data[0]
-                color[right_color] = color.get(right_color, 1) - right_data[1]
-                color[c] = color.get(c, 1) + right_data[1]
-                new_data[3] = right_data[3]
-                new_data[1] += right_data[1]
-                dsu.merge(new_leader, right_leader)
-                new_leader = dsu.leader(leader)
-        data[new_leader] = new_data
+        q, x, c = query
+        update(dsu, x, c)
     elif query[0] == 1:
-        n, c = query
-        result.append(color.get(c, 1))
-
+        q, c = query
+        result.append(num[c])
 for r in result:
     print(r)
