@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-class TreeNode:
+class DigraphTreeNode:
     """
     向き付き木構造のノードについてのクラス
 
@@ -25,15 +25,15 @@ class TreeNode:
         """
         self.n: int = n
         self.data: object = None
-        self.next: list[TreeNode] = []
+        self.next: list[DigraphTreeNode] = []
 
-    def add_node(self, tn: TreeNode):
+    def add_node(self, tn: DigraphTreeNode):
         """
         ノードの追加を行います
 
         Parameters
         ----------
-        tn: TreeNode
+        tn: DigraphTreeNode
             隣接する木構造
         """
         self.next.append(tn)
@@ -53,10 +53,10 @@ class TreeNode:
 
 def make_graph(N, A):
     if N == 0:
-        tn = TreeNode()
+        tn = DigraphTreeNode()
         tn.set_data(int(A))
         return tn
-    tmp = TreeNode()
+    tmp = DigraphTreeNode()
     dt = [0, 0]
     for i in range(3):
         B = A[3**(N-1) * i: 3**(N-1) * (i+1)]
@@ -66,7 +66,7 @@ def make_graph(N, A):
     tmp.set_data(1 if dt[0] < dt[1] else 0)
     return tmp
 
-def calc(N: int, tn: TreeNode, num: int):
+def calc(N: int, tn: DigraphTreeNode, num: int):
     if N == 0:
         # 同じであればそれを変える必要がある
         return 1 if num == tn.data else 0
