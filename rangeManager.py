@@ -6,23 +6,37 @@ class IntervalManager:
         self.intervals = SortedSet()
 
     def add(self, L, R):
-        """範囲を追加します"""
+        """ 区間 [L, R] を追加し、必要に応じて統合 """
+        new_intervals = []
         merged = (L, R)
-
+        
+        # 既存の区間と統合できる最初の位置を取得
         idx = self.intervals.bisect_left(merged)
         if idx > 0 and self.intervals[idx - 1][1] + 1 >= L:
             idx -= 1
-        to_remove = []
+
+        # 統合可能な範囲を決定
+        start_idx = idx
         while idx < len(self.intervals) and self.intervals[idx][0] <= R + 1:
             merged = (min(merged[0], self.intervals[idx][0]), max(merged[1], self.intervals[idx][1]))
-            to_remove.append(self.intervals[idx])
             idx += 1
-        for interval in to_remove:
-            self.intervals.discard(interval)
-        self.intervals.add(merged)
+        
+        # 統合される区間数
+        merge_count = idx - start_idx
+
+        if merge_count > len(self.intervals) * 0.3:
+            # 大量の削除が発生するなら、新しい SortedSet に移行
+            new_intervals = SortedSet(self.intervals[:start_idx] + self.intervals[idx:])
+            new_intervals.add(merged)
+            self.intervals = new_intervals
+        else:
+            # それ以外は通常の削除
+            for _ in range(merge_count):
+                self.intervals.pop(start_idx)
+            self.intervals.add(merged)
 
     def contains(self, num):
-        """設定した範囲のいずれかに含まれるか"""
+        """ num がどこかの区間に含まれているかを判定 """
         idx = self.intervals.bisect_left((num, num))
         if idx < len(self.intervals) and self.intervals[idx][0] <= num <= self.intervals[idx][1]:
             return True
@@ -31,7 +45,7 @@ class IntervalManager:
         return False
 
     def overlaps(self, L, R):
-        """設定した範囲が重複している箇所があるか"""
+        """ 区間 [L, R] が既存の区間と重なっているかを判定 """
         idx = self.intervals.bisect_left((L, L))
         if idx < len(self.intervals) and self.intervals[idx][0] <= R:
             return True
@@ -46,6 +60,4 @@ class IntervalManager:
 manager = IntervalManager()
 for i in range(50000):
     manager.add(3 * i, 3 * i + 1)
-for i in range(50000 - 1, -1, -1):
-    manager.add(0, 6000000)
 print(manager)
