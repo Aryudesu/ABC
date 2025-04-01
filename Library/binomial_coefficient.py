@@ -24,6 +24,8 @@ class BinomialCoefficient:
             return 0
         return (((self.data[n] * self.inv_data[n-k]) % self.mod) * self.inv_data[k]) % self.mod
 
-bc = BinomialCoefficient(100000, 1000000007)
-n, r = [int(l) for l in input().split()]
-print(bc.calc(n, r))
+bc = BinomialCoefficient(100)
+for i in range(101):
+    for j in range(i + 1):
+        print(bc.calc(i, j), end=" ")
+    print()
