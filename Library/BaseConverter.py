@@ -21,15 +21,3 @@ class BaseConverter:
         """任意の基数表記の文字列 s を、別の基数 to_base の文字列に変換"""
         n = self.from_base(s, from_base)
         return self.to_base(n, to_base)
-
-
-
-N, K = input().split()
-K = int(K)
-bc = BaseConverter()
-n = bc.from_base(N, 8)
-for _ in range(K):
-    s = bc.to_base(n, 9)
-    s = s.replace("8", "5")
-    n = bc.from_base(s, 8)
-print(bc.to_base(n, 8))
