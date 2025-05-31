@@ -1,9 +1,7 @@
-N, K = [int(l) for l in input().split()]
-A = [int(l) for l in input().split()]
-result = 1
-for a in A:
-    result *= a
-    if len(str(result)) > K:
-        result = 1
-print(result)
-
+X, Y = [int(l) for l in input().split()]
+count = 0
+for i in range(1, 7):
+    for j in range(1, 7):
+        if i + j >= X or abs(i - j) >= Y:
+            count += 1
+print(count/36)
