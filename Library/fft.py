@@ -189,20 +189,3 @@ class FFT:
         for i in range(n + m - 1):
             c[i] = (c[i] * iz) % self.mod
         return c[: n + m - 1]
-
-MOD = 998244353
-N = int(input())
-S = [int(l) for l in input().split()]
-data = [0] * (max(S) + 1)
-for s in S:
-    data[s] += 1
-fft = FFT(998244353)
-dat = fft.convolution(data, data)
-result = 0
-for s in S:
-    if 2*s >= len(dat):
-        continue
-    tmp = dat[2 * s]
-    if tmp > 0:
-        result += (tmp - 1) //2
-print(result)
