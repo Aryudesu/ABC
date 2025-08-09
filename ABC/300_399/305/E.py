@@ -1,43 +1,32 @@
-# すみませんでした
+from sortedcontainers import SortedSet
+from collections import defaultdict
+
 N, M, K = [int(l) for l in input().split()]
-yet = [True] * (N + 1)
-nodeHP = [-1] * (N + 1)
-graph = dict()
+graph = defaultdict(set)
+memo = defaultdict(lambda: -1)
 for m in range(M):
     a, b = [int(l) for l in input().split()]
-    tmp = graph.get(a, [])
-    tmp.append(b)
-    graph[a] = tmp
-    tmp = graph.get(b, [])
-    tmp.append(a)
-    graph[b] = tmp
-sg = set()
+    graph[a].add(b)
+    graph[b].add(a)
+sg = SortedSet()
 for k in range(K):
     p, h = [int(l) for l in input().split()]
-    nodeHP[p] = h
-    yet[p] = False
-    sg.add((p, h))
+    sg.add((-h, p))
+    memo[p] = h
 
 while sg:
-    new_sg = set()
-    for s in sg:
-        p, h = s
-        if h == 0:
+    h, p = sg.pop(0)
+    h = -h
+    for node in graph[p]:
+        if memo[node] > h - 1:
             continue
-        node = graph.get(p, [])
-        # print(node)
-        for n in node:
-            if nodeHP[n] <= h - 1 or yet[n]:
-                nodeHP[n] = h-1
-                new_sg.add((n, h-1))
-                yet[n] = False
-        # print(yet)
-    sg = new_sg
+        if h - 1 < 0:
+            continue
+        memo[node] = h - 1
+        sg.add((-h + 1, node))
 result = []
-count = 0
-for i in range(1, N + 1):
-    if not yet[i]:
-        count += 1
+for i in range(N + 1):
+    if memo[i] >= 0:
         result.append(i)
-print(count)
+print(len(result))
 print(*result)
