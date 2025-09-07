@@ -1,13 +1,19 @@
 N = int(input())
 T = input()
 # 先頭
-oneCount  = 1 if T[0] == "1" else 0
-zeroCount = 1 if T[0] == "0" else 0
-for idx in range(1, N):
-    nowT = T[idx]
-    # 今の文字
-    if nowT == "0":
-        oneCount, zeroCount = oneCount + zeroCount, zeroCount + oneCount
+zeroZeroCount = 0
+zeroOneCount = 0
+zeroCount = 0
+result = 0
+for t in T:
+    if t == "0":
+        zeroCount = (zeroCount + 1) % 2
     else:
-        oneCount, zeroCount = oneCount + 1, zeroCount
-print(oneCount)
+        result += 1
+    if zeroCount == 0:
+        result += zeroZeroCount
+        zeroZeroCount += 1
+    else:
+        result += zeroOneCount
+        zeroOneCount += 1
+print(result)
