@@ -62,7 +62,7 @@ class RestorePartition:
 # == 競技プログラミングの鉄則B18
 N, S = map(int, input().split())
 A = [int(l) for l in input().split()]
-rp = RestorePartition(N, A)
+rp = RestorePartition(N, A, S)
 if rp.isExists(S):
     res = rp.makeData(S)
     data = [r + 1 for r in res]
