@@ -29,8 +29,18 @@ class BinomialCoefficient:
         if n < 0:
             return self.calc(k-n-1, k) if k % 2 == 0 else -self.calc(k-n-1, k)
 
-bc = BinomialCoefficient(100)
-for i in range(101):
-    for j in range(i + 1):
-        print(bc.calc(i, j), end=" ")
-    print()
+MOD = 998244353
+N, M = map(int, input().split())
+if N == 1:
+    print((M+1) % MOD)
+else:
+    D = M - N + 1
+    bc = BinomialCoefficient(400005)
+    result = 0
+    for E in range(D + 1):
+        tmp1 = bc.calc(E + N, N)
+        tmp2 = bc.calc(D-E+N-2, N-2)
+        sgn = -1 if (D-E)%2 else 1
+        result = (result + sgn * tmp1 * tmp2) % MOD
+    result = (result * bc.data[N])%MOD
+    print(result)

@@ -1,60 +1,34 @@
-from collections import defaultdict
+from collections import deque
 
-
-def yx2int(y, x, H, W):
-    return y * W + x
-
-def is_infield(y, x, dy, dx, H, W):
-    return y + dy >= 0 and y + dy < H and x + dx >= 0 and x + dx < W
-
-def calc(H, W, S, A, B, C, D):
-    inf = 10 ** 18
-    data = defaultdict(lambda: inf)
-    st = (A, B)
-    gl = (C, D)
-    result = inf
-    data[st] = 0
-    nodes = {st}
-    while nodes:
-        new_node = set()
-        for node in nodes:
-            for dh in range(-1, 2):
-                for dw in range(-1, 2):
-                    if dh != 0 and dw != 0:
-                        continue
-                    if dh == 0 and dw == 0:
-                        continue
-                    h, w = node
-                    if not is_infield(h, w, dh, dw, H, W):
-                        continue
-                    nh = h + dh
-                    nw = w + dw
-                    if S[nh][nw] == ".":
-                        now = data[node]
-                        nd = (nh, nw)
-                        if data[nd] > now:
-                            data[nd] = now
-                            new_node.add(nd)
-                            if nd == gl:
-                                result = now
-                    elif S[h + dh][w + dw] == "#":
-                        now = data[node]
-                        nd = (nh, nw)
-                        if data[nd] > now + 1:
-                            data[nd] = now + 1
-                            new_node.add(nd)
-                        if is_infield(h, w, dh * 2, dw * 2, H, W):
-                            if S[h + dh * 2][w + dw * 2] == "#":
-                                nd = (h + dh * 2, w + dw * 2)
-                                if data[nd] > now + 1:
-                                    data[nd] = now + 1
-                                    new_node.add(nd)
-        nodes = new_node
-    return result
-
-H, W = [int(l) for l in input().split()]
-S = []
-for h in range(H):
-    S.append(input())
-A, B, C, D = [int(l) - 1 for l in input().split()]
-print(calc(H, W, S, A, B, C, D))
+INF = (1000 ** 2) + 10
+data = deque()
+dir = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+H, W = map(int, input().split())
+S = [input() for _ in range(H)]
+A, B, C, D = map(int, input().split())
+A, B, C, D = A - 1, B - 1, C - 1, D - 1
+fieldData = [[INF] * W for _ in range(H)]
+fieldData[A][B] = 0
+# (A, B)にいるときの最小手数
+data.append((0, A, B))
+while data:
+    n, y, x = data.popleft()
+    if fieldData[y][x] < n:
+        continue
+    for dy, dx in dir:
+        ny, nx = y + dy, x + dx
+        if not (0 <= ny < H and 0 <= nx < W):
+            continue
+        # 移動先が壁の場合
+        if S[ny][nx] == "#":
+            for i in range(1, 3):
+                nny, nnx = y + dy * i, x + dx * i
+                if 0 <= nny < H and 0 <= nnx < W:
+                    if n + 1 < fieldData[nny][nnx]:
+                        data.append((n + 1, nny, nnx))
+                        fieldData[nny][nnx] = n + 1
+        else:
+            if n < fieldData[ny][nx]:
+                data.appendleft((n, ny, nx))
+                fieldData[ny][nx] = n
+print(fieldData[C][D])

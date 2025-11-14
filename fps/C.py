@@ -20,17 +20,20 @@ class BinomialCoefficient:
         self.inv_data.reverse()
 
     def calc(self, n, k):
-        if k < 0:
+        if n < k or k < 0:
             return 0
-        if n >= 0:
-            if n < k:
-                return 0
-            return (((self.data[n] * self.inv_data[n-k]) % self.mod) * self.inv_data[k]) % self.mod
-        if n < 0:
-            return self.calc(k-n-1, k) if k % 2 == 0 else -self.calc(k-n-1, k)
+        return (((self.data[n] * self.inv_data[n-k]) % self.mod) * self.inv_data[k]) % self.mod
 
-bc = BinomialCoefficient(100)
-for i in range(101):
-    for j in range(i + 1):
-        print(bc.calc(i, j), end=" ")
-    print()
+N, M, S = map(int, input().split())
+MOD = 998244353
+bc = BinomialCoefficient(400005, MOD)
+result = 0
+for n in range(S+1):
+    m = S - (M + 1) * n
+    if S < n * (M + 1):
+        break
+    if m < 0:
+        break
+    sgn = -1 if n % 2 else 1
+    result = (result + bc.calc(N, n) * bc.calc(N + m - 1, N-1) * sgn) % MOD
+print(result)
