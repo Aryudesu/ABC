@@ -1,30 +1,79 @@
-import sys
-import bisect
+from bisect import bisect_left
+from typing import List
 
-input = sys.stdin.readline
+class LISolver:
+    """最長増加部分列の取得"""
+    def __init__(self, A: List[int]) -> None:
+        """初期化"""
+        self.A = A
+        self.N = len(A)
+        self._length = 0
+        self._subseq = []
+        self._solved = False
+
+    def _solve(self) -> None:
+        """LIS復元"""
+        A = self.A
+        N = self.N
+        INF = float('inf')
+
+        dp_val = []       # 長さiの増加列の末尾最小値
+        dp_index = []     # それに対応するAのインデックス
+        pos = [0]*N       # A[i]が何番目の位置に入ったか
+        prev = [-1]*N     # 復元のための前インデックス
+
+        for i, a in enumerate(A):
+            idx = bisect_left(dp_val, a)
+            if idx == len(dp_val):
+                dp_val.append(a)
+                dp_index.append(i)
+            else:
+                dp_val[idx] = a
+                dp_index[idx] = i
+            pos[i] = idx
+            if idx > 0:
+                prev[i] = dp_index[idx - 1]
+
+        # 復元
+        length = len(dp_val)
+        cur = -1
+        for i in range(N - 1, -1, -1):
+            if pos[i] == length - 1:
+                cur = i
+                break
+
+        subseq = []
+        while cur != -1:
+            subseq.append(A[cur])
+            cur = prev[cur]
+        subseq.reverse()
+
+        self._length = length
+        self._subseq = subseq
+        self._solved = True
+
+    def length(self) -> int:
+        """最長増加部分列の長さを返す"""
+        if not self._solved:
+            self._solve()
+        return self._length
+
+    def restore(self) -> List[int]:
+        """最長増加部分列の具体的な列を返す"""
+        if not self._solved:
+            self._solve()
+        return self._subseq[:]
+
+
 
 N = int(input())
 boxes = []
-for _ in range(N):
+for n in range(N):
     x, y = map(int, input().split())
-    boxes.append((x, y))
-
-# (x昇順, xが同じならy降順) でソート
-boxes.sort(key=lambda p: (p[0], -p[1]))
-
-# y だけ取り出す
-ys = [y for _, y in boxes]
-
-# ys の「厳密昇順」LIS長を O(N log N) で求める
-tails = []
-for val in ys:
-    # val を入れられる位置を探す
-    # 厳密増加にしたいので、同じ値は上書き側に入れる
-    # → bisect_leftでOK
-    pos = bisect.bisect_left(tails, val)
-    if pos == len(tails):
-        tails.append(val)
-    else:
-        tails[pos] = val
-
-print(len(tails))
+    boxes.append((x, -y))
+boxes.sort()
+yData = []
+for x, y in boxes:
+    yData.append(-y)
+lis = LISolver(yData)
+print(lis.length())
