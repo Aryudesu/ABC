@@ -1,20 +1,17 @@
-N, Q = [int(l) for l in input().split()]
-A = [int(l) for l in input().split()]
-data = dict()
+from collections import defaultdict
+
+N, Q = map(int, input().split())
+A = list(map(int, input().split()))
+data = defaultdict(list)
 for idx in range(N):
     a = A[idx]
-    tmp = data.get(a, [])
-    tmp.append(idx + 1)
-    data[a] = tmp
-print(data)
+    data[a].append(idx)
 result = []
-for _ in range(Q):
-    x, k = [int(l) for l in input().split()]
-    tmp = data.get(x, [])
-    if k - 1 < len(tmp):
-        result.append(tmp[k-1])
-    else:
+for q in range(Q):
+    x, k = map(int, input().split())
+    if len(data[x]) < k:
         result.append(-1)
-
+        continue
+    result.append(data[x][k-1]+1)
 for r in result:
     print(r)
