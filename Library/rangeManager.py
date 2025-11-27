@@ -47,7 +47,6 @@ class IntervalManager:
     def __repr__(self):
         return str(list(self.intervals))
 
-# 使用例
 manager = IntervalManager()
 for i in range(200000, -1, -1):
     manager.add(3 * i, 3 * i + 1)
