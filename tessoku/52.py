@@ -1,14 +1,15 @@
+from collections import deque
+
 Q = int(input())
-data = []
+data = deque()
 result = []
-pointer = 0
 for q in range(Q):
-    query = [l for l in input().split()]
+    query = input().split()
     if query[0] == "1":
         data.append(query[1])
     elif query[0] == "2":
-        result.append(data[pointer])
+        result.append(data[0])
     elif query[0] == "3":
-        pointer += 1
+        data.popleft()
 for r in result:
     print(r)
