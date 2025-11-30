@@ -1,57 +1,40 @@
-import heapq
+from sortedcontainers import SortedList
 
 
-class Multiset:
-    def __init__(self) -> None:
-        self.data = []
-        self.d = dict()
-        self.size = 0
-
-    def insert(self, x):
-        heapq.heappush(self.data, x)
-        self.size += 1
-        if x not in self.d:
-            self.d[x] = 1
-        else:
-            self.d[x] += 1
-
-    def erase(self, x):
-        if x not in self.d or self.d[x] == 0:
-            raise Exception()
-        else:
-            self.d[x] -= 1
-            self.size -= 1
-
-        while len(self.data) != 0:
-            if self.d[self.data[0]] == 0:
-                heapq.heappop(self.h)
-            else:
-                break
-
-        while len(self.data) != 0:
-            if self.d[self.data[-1]] == 0:
-                heapq.heappop(self.data)
-            else:
-                break
-
-    def is_exist(self, x):
-        return x in self.d and self.d[x] != 0
-
-    def get_size(self):
-        return self.size
-
-    def get_min(self):
-        return self.data[0]
-
-    def get_max(self):
-        return self.data[-1]
-
-
-N, K, Q = [int(l) for l in input().split()]
+N, K, Q = map(int, input().split())
+sortedData = SortedList([0] * N)
 data = [0] * N
-X = Multiset()
-Y = Multiset()
+# 最初は全部0なのでk番目の値ももちろん0
+kth = 0
+sumdata = 0
+result = []
 for q in range(Q):
-    x, y = [int(l) for l in input().split()]
-    Y.insert(y)
-    print("max, min", Y.get_max(), Y.get_min())
+    X, Y = map(int, input().split())
+    X -= 1
+    # 書き換え前のk番目の値
+    kth = -sortedData[K-1]
+    # 書き換え前
+    prev = data[X]
+    now = Y
+    data[X] = now
+    # 書き換え前は外す
+    sortedData.discard(-prev)
+    sortedData.add(-now)
+    next_kth = -sortedData[K - 1]
+    # 入れる値が挿入後のk番目以下ならk番目の値を足す
+    if now <= next_kth:
+        sumdata += next_kth
+    else:
+        # 入れる値が挿入後のk番目より大きいなら挿入した値を足す
+        sumdata += now
+    # 外れる値が挿入後の大きいのであれば
+    # 総和から削除
+    if prev > next_kth:
+        sumdata -= prev
+    else:
+        sumdata -= kth
+    result.append(sumdata)
+    # print(sortedData, data, sumdata, kth, prev, next_kth)
+for r in result:
+    print(r)
+    

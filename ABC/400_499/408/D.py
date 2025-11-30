@@ -1,18 +1,19 @@
-T =  int(input())
-res = []
-for _ in range(T):
+def calc()-> int:
     N = int(input())
-    S = input().strip()
+    S = input()
+    C = [0] * (N + 1)
 
-    l = S.find('1')
-    if l == -1:
-        res.append("0")
-        continue
-    r = S.rfind('1')
-    res.append(str(S[l:r+1].count('0')))
+    for i in range(N):
+        C[i + 1] = C[i] + (1 if S[i] == "0" else -1)
+    sm = S.count("1")
+    ma = 0
+    res = 0
+    for i in range(N+1):
+        res = min(res, C[i] - ma)
+        ma = max(ma, C[i])
+    return sm + res
 
-for r in res:
-    print(r)
 
-
-
+T = int(input())
+for _ in range(T):
+    print(calc())
