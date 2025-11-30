@@ -1,83 +1,84 @@
-class BlockData:
-    def __init__(self, n, y, x):
-        self.n = n
-        self.y = y
-        self.x = x
-        # 消えない場合何段目に積まれるか
-        self.xc = None
-        # 落ちきるまでの時間
-        self.time = None
-        self.delete_time = None
+from collections import defaultdict
+from sortedcontainers import SortedSet
 
-    def set_xc_time(self, xc):
-        self.xc = xc
-        self.time = self.y - xc
+class Gravity:
+    def __init__(self, N: int, W: int):
+        self.N = N
+        self.W = W
+        # times[n] = t 何もなく最後に1段目にブロックが着地するであろう時間
+        self.times = dict()
+        # xに存在する個数
+        self.count = [0] * W
+        self.blocks = defaultdict(list)
+        self.exists = set(range(N))
+    
+    def add(self, XY: list[list[int]]):
+        # 低いところにある順に処理
+        YX = [[XY[n][1], XY[n][0], n] for n in range(self.N)]
+        YX.sort()
+        for y, x, n in YX:
+            h = self.count[x]
+            self.count[x] += 1
+            self.blocks[h].append(n)
+            if self.times.get(h) is None:
+                self.times[h] = y
+            else:
+                self.times[h] = max(self.times[h], y)
 
-    def set_delete_time(self, time):
-        self.delete_time = time
+    def calc(self, TA: list[list[int]])-> list[int]:
+        result = [None] * len(TA)
+        TAN = []
+        for n in range(len(TA)):
+            t, a = TA[n]
+            TAN.append((t, a, n))
+        TAN.sort()
+        # 時間
+        now = 0
+        # 高さ
+        h = 0
+        # クエリ用
+        idx = 0
+        # 時刻tの時点で消えるものは最初から消しておく
+        if len(self.blocks[h]) == self.W and self.times.get(h) == 0:
+            for b in self.blocks[h]:
+                self.exists.discard(b)
+            h += 1
+        # 消え続けるまで続ける
+        while len(self.blocks[h]) == self.W:
+            # 次のブロックが消える直前
+            next_time = max(self.times[h] + 1, now + 1)
+            while idx < len(TAN):
+                t, a, n = TAN[idx]
+                if t >= next_time:
+                    break
+                result[n] = a in self.exists
+                idx += 1
+            if idx >= len(TAN):
+                break
+            # 消えるブロック一覧
+            for b in self.blocks[h]:
+                self.exists.discard(b)
+            now = next_time
+            h += 1
+        while idx < len(TAN):
+            t, a, n = TAN[idx]
+            result[n] = a in self.exists
+            idx += 1
+        return result
 
-    def __lt__(self, other):
-        return self.y < other.y
 
-    def __str__(self):
-        return f"[n:{self.n}, y:{self.y}, x:{self.x}, xc:{self.xc}, time:{self.time}, delete:{self.delete_time}]"
-
-def set_data(block):
-    # ブロックが消えない場合何段目に落ち着くのか
-    x_count = [0] * W
-    for n in range(N):
-        bd = block[n]
-        bd.set_xc_time(x_count[bd.x])
-        x_count[bd.x] += 1
-    return x_count
-
-N, W = [int(l) for l in input().split()]
-# ブロック情報取得
-block = []
-for n in range(N):
-    x, y = [int(l) - 1 for l in input().split()]
-    bd = BlockData(n, y, x)
-    block.append(bd)
-# 高さ順に並び替え
-block.sort()
-x_count = set_data(block)
-# 最後に消える高さ
-y_max = min(x_count)
-# 揃う秒数
-y_time = [0] * y_max
-
-for d in block:
-    if y_max > d.xc:
-        y_time[d.xc] = max([d.time, y_time[d.xc]])
-
-del_y_time = [0] * y_max
-for y in range(y_max):
-    if y > 0:
-        if del_y_time[y-1] >= y_time[y]:
-            del_y_time[y] = del_y_time[y-1] + 1
-        else:
-            del_y_time[y] = y_time[y]
-    else:
-        del_y_time[y] = y_time[y]
-
-for b in block:
-    if b.xc < y_max:
-        b.set_delete_time(del_y_time[b.xc])
-
-data = dict()
-for b in block:
-    if not b.delete_time is None:
-        data[b.n] = b.delete_time + 1
-
-# for b in block:
-#     print(b)
-
-# print(data)
-
+N, W = map(int, input().split())
+XY = []
+for _ in range(N):
+    x, y = map(int, input().split())
+    XY.append((x-1, y-1))
+g = Gravity(N, W)
+g.add(XY)
 Q = int(input())
+TA = []
 for _ in range(Q):
-    t, a = [int(l) for l in input().split()]
-    if data.get(a - 1, 10000000000) > t:
-        print("Yes")
-    else:
-        print("No")
+    t, a = map(int, input().split())
+    TA.append((t, a-1))
+result = g.calc(TA)
+for r in result:
+    print("Yes" if r else "No")
