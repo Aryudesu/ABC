@@ -1,53 +1,50 @@
 class NodeData:
-    def __init__(self, s):
-        self.st = s
-        self.next = dict()
-        self.isX = False
-        self.count = 0
+    def __init__(self):
+        self.nextData = dict()
+        self.isXData = False
+        self.isYend = False
 
-tree = dict()
-result = 0
+class Trie:
+    def __init__(self):
+        self.base = NodeData()
+        self.base.isXData = True
+        self.count = 0
+        self.result = 0
+    
+    def addX(self, S: str):
+        tre: NodeData = self.base
+        for s in S:
+            tre.nextData[s] = tre.nextData.get(s, NodeData())
+            tre = tre.nextData[s]
+            tre.isXData = True
+            if tre.isYend:
+                self.result += 1
+                tre.isYend = False
+
+    def addY(self, S: str):
+        tre: NodeData = self.base
+        for s in S:
+            tre.nextData[s] = tre.nextData.get(s, NodeData())
+            tre = tre.nextData[s]
+        if tre.isXData:
+            self.result += 1
+        tre.isYend = True
+        
+
+
+trie = Trie()
 Q = int(input())
+yCount = 0
 res = []
 for q in range(Q):
     T, S = input().split()
     if T == "1":
-        tr = tree
-        c = 0
-        for idx in range(len(S)):
-            s = S[idx]
-            tre = tr.get(s)
-            if tre is None:
-                tre = NodeData(s)
-            tr[s] = tre
-
-            if tre.isX:
-                c += tre.count
-            tre.count += 1
-
-            tr = tre.next
-        tmp = (tre.count - c)
-        result -= max(tmp, 0)
-        tre.isX = True
+        trie.addY(S)
     elif T == "2":
-        flag = True
-        tr = tree
-        for idx in range(len(S)):
-            s = S[idx]
-            tre = tr.get(s)
-            if tre is None:
-                tre = NodeData(s)
-            tr[s] = tre
-            tr = tre.next
-            if flag:
-                tre.count += 1
-            if tre.isX:
-                flag = False
-                break
-        if flag:
-            result += 1
+        trie.addX(S)
+        yCount += 1
     else:
         raise Exception()
-    res.append(result)
+    res.append(yCount - trie.result)
 for r in  res:
     print(r)

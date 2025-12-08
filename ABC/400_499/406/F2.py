@@ -1,8 +1,7 @@
-from collections import defaultdict
 from atcoder.fenwicktree import FenwickTree
 import sys
-sys.setrecursionlimit(10**6)
 import pypyjit
+sys.setrecursionlimit(10**6)
 pypyjit.set_param('max_unroll_recursion=-1')
 
 
@@ -13,25 +12,22 @@ class DFSTree:
         self.lList = [-1] * (N + 1)
         self.rList = [-1] * (N + 1)
         self.root = 1
-        self.wData = []
-        self.toData = [set() for _ in range(N + 1)]
+        self.parent = [-1] * (N + 1)
+        self.ft = FenwickTree(2 * N + 2)
+        self.node_count = 0
+        self.dfs(self.root, -1)
 
-        self.memo = set()
-        self.memo.add(self.root)
-        self.dfs(self.root)
-
-    def dfs(self, node: int)->int:
-        self.wData.append(1)
-        self.lList[node] = len(self.wData) - 1
+    def dfs(self, node: int, parent: int)->int:
+        self.ft.add(self.node_count, 1)
+        self.node_count += 1
+        self.lList[node] = self.node_count - 1
         for nextNode in self.graph[node]:
-            if nextNode in self.memo:
+            if nextNode == parent:
                 continue
-            self.toData[node].add(nextNode)
-            self.memo.add(nextNode)
-            self.dfs(nextNode)
-            self.memo.discard(nextNode)
-        self.rList[node] = len(self.wData) - 1
-        self.wData.append(0)
+            self.parent[nextNode] = node
+            self.dfs(nextNode, node)
+        self.rList[node] = self.node_count - 1
+        self.node_count += 1
 
 
 N = int(input())
@@ -43,14 +39,12 @@ for _ in range(N-1):
     graph[v].append(u)
     edge.append((u, v))
 dt = DFSTree(N, graph)
-ft = FenwickTree(len(dt.wData))
-for idx in range(len(dt.wData)):
-    if dt.wData[idx] != 0:
-        ft.add(idx, dt.wData[idx])
+ft = dt.ft
+
 allweight = N
 lList = dt.lList
 rList = dt.rList
-toData = dt.toData
+parent = dt.parent
 
 result = []
 Q = int(input())
@@ -64,12 +58,10 @@ for _ in range(Q):
     elif query[0] == 2:
         n, y = query
         u, v = edge[y]
-        if u in toData[v]:
-            lidx = lList[u]
-            ridx = rList[u]
-        else:
-            lidx = lList[v]
-            ridx = rList[v]
+
+        child = v if parent[v] == u else u
+        lidx = lList[child]
+        ridx = rList[child]
         a = ft.sum(lidx, ridx + 1)
         b = allweight - a
         result.append(abs(a-b))

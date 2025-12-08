@@ -1,113 +1,56 @@
-import sys
+def enc(y1, x1, y2, x2, base):
+    return y1 * (base ** 3) + x1 * (base ** 2) + y2 * base + x2
 
-import pypyjit
+def dec(num, base):
+    return num // (base ** 3), (num % (base ** 3)) // (base ** 2), (num % (base ** 2)) // base, num % base
 
-pypyjit.set_param('max_unroll_recursion=-1')
-sys.setrecursionlimit(10**6)
 
-INF = 10**18
+def calc(N: int, S: list[str])-> int:
+    INF = N ** 4
+    P = []
+    dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    for h in range(N):
+        for w in range(N):
+            if S[h][w] == "P":
+                P.append(h)
+                P.append(w)
+    py1, px1, py2, px2 = P
+    node = enc(py1, px1, py2, px2, N)
+    nodes = {node}
+    memo = {node}
+    count = 0
+    while nodes:
+        count += 1
+        nextNodes = set()
+        for node in nodes:
+            py1, px1, py2, px2 = dec(node, N)
+            for dy, dx in dirs:
+                newPy1 = py1 + dy
+                newPx1 = px1 + dx
+                if not (0 <= newPy1 < N and 0 <= newPx1 < N):
+                    newPy1 = py1
+                    newPx1 = px1
+                if S[newPy1][newPx1] == "#":
+                    newPy1 = py1
+                    newPx1 = px1
+                newPy2 = py2 + dy
+                newPx2 = px2 + dx
+                if not (0 <= newPy2 < N and 0 <= newPx2 < N):
+                    newPy2 = py2
+                    newPx2 = px2
+                if S[newPy2][newPx2] == "#":
+                    newPy2 = py2
+                    newPx2 = px2
+                e = enc(newPy1, newPx1, newPy2, newPx2, N)
+                if e in memo:
+                    continue
+                if newPy1 == newPy2 and newPx1 == newPx2:
+                    return count
+                memo.add(e)
+                nextNodes.add(e)
+        nodes = nextNodes
+    return -1
+
 N = int(input())
 S = [input() for _ in range(N)]
-memo = [False] * (N ** 4 + 1)
-resmemo = [INF + 1] * (N ** 4 + 1)
-
-
-def ept(c):
-    return c == "." or c == "P"
-
-def conv2yx(p1y, p1x, p2y, p2x):
-    return p1y * (N * N * N) + p1x * (N * N) + p2y * N + p2x
-
-def searchResult(depth, num):
-    if resmemo[num] != INF + 1:
-        return resmemo[num]
-    result = INF
-    p1, p2 = num // (N * N), num % (N * N)
-    p1y, p1x = p1 // N, p1 % N
-    p2y, p2x = p2 // N, p2 % N
-    tp1y, tp1x, tp2y, tp2x = p1y, p1x, p2y, p2x
-    if p1y - 1 >= 0 and ept(S[p1y-1][p1x]):
-        tp1y -= 1
-    if p2y - 1 >= 0 and ept(S[p2y-1][p2x]):
-        tp2y -= 1
-    if p1y != tp1y or p2y != tp2y:
-        if tp1y == tp2y and tp1x == tp2x:
-            return depth
-        tmp = conv2yx(tp1y, tp1x, tp2y, tp2x)
-        if not memo[tmp]:
-            memo[tmp] = True
-            res = searchResult(depth + 1, tmp)
-            memo[tmp] = False
-            if res < result:
-                result = res
-            if resmemo[num] > res:
-                resmemo[num] = (res, depth)
-
-    tp1y, tp1x, tp2y, tp2x = p1y, p1x, p2y, p2x
-    if p1y + 1 < N and ept(S[p1y+1][p1x]):
-        tp1y += 1
-    if p2y + 1 < N and ept(S[p2y+1][p2x]):
-        tp2y += 1
-    if p1y != tp1y or p2y != tp2y:
-        if tp1y == tp2y and tp1x == tp2x:
-            return depth
-        tmp = conv2yx(tp1y, tp1x, tp2y, tp2x)
-        if not memo[tmp]:
-            memo[tmp] = True
-            res = searchResult(depth + 1, tmp)
-            memo[tmp] = False
-            if res < result:
-                result = res
-            if resmemo[num] > res:
-                resmemo[num] = (res, depth)
-
-    tp1y, tp1x, tp2y, tp2x = p1y, p1x, p2y, p2x
-    if p1x - 1 >= 0 and ept(S[p1y][p1x-1]):
-        tp1x -= 1
-    if p2x - 1 >= 0 and ept(S[p2y][p2x-1]):
-        tp2x -= 1
-    if p1x != tp1x or p2x != tp2x:
-        if tp1y == tp2y and tp1x == tp2x:
-            return depth
-        tmp = conv2yx(tp1y, tp1x, tp2y, tp2x)
-        if not memo[tmp]:
-            memo[tmp] = True
-            res = searchResult(depth + 1, tmp)
-            memo[tmp] = False
-            if res < result:
-                result = res
-            if resmemo[num] > res:
-                resmemo[num] = (res, depth)
-
-    tp1y, tp1x, tp2y, tp2x = p1y, p1x, p2y, p2x
-    if p1x + 1 < N and ept(S[p1y][p1x+1]):
-        tp1x += 1
-    if p2x + 1 < N and ept(S[p2y][p2x+1]):
-        tp2x += 1
-    if p1x != tp1x or p2x != tp2x:
-        if tp1y == tp2y and tp1x == tp2x:
-            return depth
-        tmp = conv2yx(tp1y, tp1x, tp2y, tp2x)
-        if not memo[tmp]:
-            memo[tmp] = True
-            res = searchResult(depth + 1, tmp)
-            memo[tmp] = False
-            if res < result:
-                result = res
-            if resmemo[num] > res:
-                resmemo[num] = (res, depth)
-    if resmemo[num] > result:
-        resmemo[num] = (result, depth)
-    return result
-
-p1 = None
-p2 = None
-for n in range(N):
-    for m in range(N):
-        tmp = n * N + m
-        if S[n][m] == "P" and p1 is None:
-            p1 = n * N + m
-        elif S[n][m] == "P":
-            p2 = n * N + m
-result = searchResult(1, p1 * N * N + p2)
-print(-1 if result == INF else result)
+print(calc(N, S))

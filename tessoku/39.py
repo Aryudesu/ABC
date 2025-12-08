@@ -1,11 +1,14 @@
 N = int(input())
-A = [int(l) for l in input().split()]
-data = dict()
-for a in A:
-    data[a] = data.get(a, 0) + 1
-result = 0
-for key in data:
-    num = data.get(key, 0)
-    if num >= 3:
-        result += (num * (num - 1) * (num - 2)) // 6
-print(result)
+RL = []
+for n in range(N):
+    l, r = map(int, input().split())
+    RL.append((r, l))
+RL.sort()
+now = 0
+count = 0
+for r, l in RL:
+    if l < now:
+        continue
+    now = r
+    count += 1
+print(count)
