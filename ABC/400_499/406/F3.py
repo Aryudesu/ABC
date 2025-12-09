@@ -1,11 +1,11 @@
 from atcoder.fenwicktree import FenwickTree
 import sys
-import pypyjit
+# import pypyjit
 sys.setrecursionlimit(10**6)
-pypyjit.set_param('max_unroll_recursion=-1')
+# pypyjit.set_param('max_unroll_recursion=-1')
 
 class SubTreeSumCalculator:
-    """木に対し部分木のノードのサイズの総和を計算する"""
+    """木に対し、頂点重みの部分木和を管理する"""
 
     def __init__(self, N: int, graph: list[list[int]], root: int=1):
         """初期化．グラフはニ字配列形式．根は何も設定しなければ1をとる．"""
@@ -16,10 +16,8 @@ class SubTreeSumCalculator:
         self.childSize = [0] * (N + 1)
         self.parent = [-1] * (N + 1)
         self.time = 0
-        self.ft = FenwickTree(N + 1)
+        self.ft = FenwickTree(N)
         self._dfs(self.root, -1)
-        self._build()
-
 
     def _dfs(self, node: int, parent: int):
         self.parent[node] = parent
@@ -32,20 +30,28 @@ class SubTreeSumCalculator:
             self._dfs(nextNode, node)
             self.childSize[node] += self.childSize[nextNode]
     
-    def _build(self):
-        for i in range(1, N + 1):
-            self.ft.add(i, 1)
+    def initialize(self, value: int|list[int]):
+        """値を初期化します．配列での引数の場合は1-indexedのノード番号に対応します．"""
+        if isinstance(value, int):
+            if value == 0:
+                return
+            for i in range(self.N):
+                self.ft.add(i, value)
+        else:
+            assert len(value) == self.N + 1
+            for i in range(1, self.N+1):
+                self.ft.add(self.inTime[i], value[i])
     
     def getParent(self, p: int)-> int:
         """ノードに対する親の取得"""
         return self.parent[p]
     
-    def add(self, p, x):
+    def add(self, p: int, x: int):
         """ノードに値を加算する"""
         self.ft.add(self.inTime[p], x)
     
     def sum(self, root: int)->int:
-        """rootを根とする部分木のサイズを取得する"""
+        """root を根とする部分木の重み総和を取得する"""
         return self.ft.sum(self.inTime[root], self.inTime[root] + self.childSize[root])
     
     def __repr__(self):
@@ -60,6 +66,7 @@ for _ in range(N-1):
     graph[v].append(u)
     edge.append((u, v))
 ssc = SubTreeSumCalculator(N, graph)
+ssc.initialize(1)
 allWeight = N
 result = []
 Q = int(input())
