@@ -14,18 +14,17 @@ result = set()
 tmp = set(A)
 if len(tmp) == 1:
      result.add(A[0])
-# 全て折れている
+# 全部折れている
 L = A[0] + A[-1]
 if isOk(A, L):
     result.add(L)
-t = A[-1]
-# 折れていないものが存在
+# 折れていないものがある
+L = A[-1]
 memo = -1
 for i in range(N):
-    if t == A[i]:
+    if L == A[i]:
         memo = i
         break
-L = A[-1]
 if memo > 0 and isOk(A[:memo], L):
         result.add(L)
 result = sorted(list(result))

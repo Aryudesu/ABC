@@ -1,11 +1,27 @@
+from collections import deque
+
 N = int(input())
 H = [int(l) for l in input().split()]
-# 量，高さ，幅
-Data = [(H[0], H[0], 1)]
-idx = 0
-for n in range(1, N):
-    h = H[n]
-    if Data[idx][1] < h:
-        r, h_, we = Data[idx]
-    else:
-        pass
+# スタックデータ
+Data = deque()
+Data.append(10**10)
+W = deque()
+W.append(1)
+R = deque()
+R.append(0)
+result = []
+for idx in range(N):
+    h = H[idx]
+    W.append(1)
+    while Data[-1] < h:
+        Data.pop()
+        w = W.pop()
+        R.pop()
+        W[-1] += w
+    Data.append(h)
+    R.append(R[-1] + Data[-1] * W[-1])
+    result.append(R[-1] + 1)
+    # print("Data", Data)
+    # print("W", W)
+    # print("R", R)
+print(*result)
