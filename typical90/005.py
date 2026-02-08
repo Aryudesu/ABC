@@ -1,43 +1,26 @@
-def updateData(left: dict, right: dict, keta: int, B: int, MOD: int):
-    result = dict()
-    for idx1 in left:
-        for idx2 in right:
-            n1 = left.get(idx1, 0)
-            n2 = right.get(idx2, 0)
-            if n1 == 0 or n2 == 0:
-                continue
-            m = (idx1 * (10 ** keta) + idx2) % B
-            result[m] = (result.get(m, 0) + n1 * n2) % MOD
-    return result
-
+def doubling(N: int, B: int, C: list[int], maxLen: int = 62):
+    MOD = 10 ** 9 + 7
+    resultData = [[0] * B]
+    # 1桁目
+    for c in C:
+        resultData[0][c] += 1
+    # 各桁計算
+    pow10 = 10
+    idx = 0
+    for _ in range(maxLen):
+        nextData = [0] * B
+        for b in range(B):
+            for c in C:
+                i = (b * pow10 + c) % B
+                nextData[i] = (nextData[i] + resultData[idx][b] * resultData[idx][c]) % MOD
+        resultData.append(nextData)
+        pow10 = (pow10 * pow10) % B
+        idx += 1
+    return resultData
 
 def calc(N, B, C):
-    num = N
-    MOD = 10 ** 9 + 7
-    # 計算用
-    result = dict()
-    # 各桁用
-    keta = 1
-    # keta[2のべき乗桁についてBで割った余り] = 通り数
-    ketaData = dict()
-    for c in C:
-        k = c % B
-        ketaData[k] = (ketaData.get(k, 0) + 1) % MOD
-    while num % 2 == 0:
-        ketaData = updateData(ketaData, ketaData, keta, B, MOD)
-        keta *= 2
-        num >>= 1
-    for k in ketaData:
-        result[k] = ketaData[k]
-    num >>= 1
-    while num:
-        ketaData = updateData(ketaData, ketaData, keta, B, MOD)
-        keta *= 2
-        if num % 2:
-            result = updateData(result, ketaData, keta, B, MOD)
-        num >>= 1
-    return result.get(0, 0)
-
+    data = doubling(N, B, C)
+    return data[-1][0]
 
 N, B, K = [int(l) for l in input().split()]
 C = [int(l) % B for l in input().split()]
