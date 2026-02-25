@@ -2,7 +2,7 @@ from functools import lru_cache
 
 
 class OsaKMethod:
-    def __init__(self, n:int = 10 ** 6):
+    def __init__(self, n: int = 10**6):
         """下準備"""
         self.spf = list(range(n))
         for p in range(2, n):
@@ -12,7 +12,7 @@ class OsaKMethod:
                 if self.spf[i] == i:
                     self.spf[i] = p
 
-    def factorize(self, n:int):
+    def factorize(self, n: int):
         """素因数分解"""
         if self.spf[1] == 0:
             raise Exception()
@@ -24,12 +24,12 @@ class OsaKMethod:
             tmp //= p
         return mp
 
-    def yakusu(self, n:int):
+    def yakusu(self, n: int):
         """約数個数"""
         mp = self.factorize(n)
         res = 1
         for pa in mp:
-            res *= (mp[pa] + 1)
+            res *= mp[pa] + 1
         return res
 
     def _dfsd(self, cur_idx: int, cur_val: int, result: list, mp: list):
@@ -47,7 +47,7 @@ class OsaKMethod:
         return
 
     @lru_cache()
-    def calc_devisors_fast(self, num:int):
+    def calc_devisors_fast(self, num: int):
         """約数列挙"""
         result = list()
         mp = self.factorize(num)
@@ -59,8 +59,13 @@ class OsaKMethod:
         return result
 
 
-
-
-N, K = [int(l) for l in input().split()]
-A = [int(l) for l in input().split()]
-osa_k = OsaKMethod()
+osa_k = OsaKMethod(10**7 + 3)
+N = int(input())
+result = 0
+for i in range(1, N+1):
+    fact = osa_k.factorize(i)
+    tmp = 1
+    for k in fact:
+        tmp *= fact[k]+1
+    result += i * tmp
+print(result)

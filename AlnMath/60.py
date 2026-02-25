@@ -1,2 +1,2 @@
 N = int(input())
-print("Second" if (N-1) % 4 else "First")
+print("Second" if N % 4 == 0 else "First")

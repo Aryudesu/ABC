@@ -1,50 +1,48 @@
-class NodeData:
+class Node:
     def __init__(self):
-        self.nextData = dict()
-        self.isXData = False
-        self.isYend = False
+        self.nextNode = dict()
+        self.isY = False
+        self.endXCount = 0
 
-class Trie:
+class TrieTree:
     def __init__(self):
-        self.base = NodeData()
-        self.base.isXData = True
-        self.count = 0
-        self.result = 0
-    
-    def addX(self, S: str):
-        tre: NodeData = self.base
-        for s in S:
-            tre.nextData[s] = tre.nextData.get(s, NodeData())
-            tre = tre.nextData[s]
-            tre.isXData = True
-            if tre.isYend:
-                self.result += 1
-                tre.isYend = False
+        self.root = Node()
 
-    def addY(self, S: str):
-        tre: NodeData = self.base
-        for s in S:
-            tre.nextData[s] = tre.nextData.get(s, NodeData())
-            tre = tre.nextData[s]
-        if tre.isXData:
-            self.result += 1
-        tre.isYend = True
-        
+    def addX(self, X: str)->bool:
+        node = self.root
+        for x in X:
+            nextNode = node.nextNode.get(x, Node())
+            node.nextNode[x] = nextNode
+            node = nextNode
+        node.endXCount += 1
+        return not node.isY
 
+    def addY(self, Y: str)->int:
+        node = self.root
+        result = 0
+        for y in Y:
+            nextNode = node.nextNode.get(y, Node())
+            nextNode.isY = True
+            result += nextNode.endXCount
+            node.nextNode[y] = nextNode
+            node = nextNode
+        return result
 
-trie = Trie()
+trie = TrieTree()
 Q = int(input())
-yCount = 0
+xCount = 0
 res = []
 for q in range(Q):
     T, S = input().split()
     if T == "1":
-        trie.addY(S)
+        tmp = trie.addX(S)
+        if tmp:
+            xCount += 1
     elif T == "2":
-        trie.addX(S)
-        yCount += 1
+        tmp = trie.addY(S)
+        xCount -= tmp
     else:
         raise Exception()
-    res.append(yCount - trie.result)
+    res.append(xCount)
 for r in  res:
     print(r)

@@ -1,2 +1,9 @@
 N, X, Y = [int(l) for l in input().split()]
-print("No" if (N - X - Y) % 2 or N < X + Y else "Yes")
+X, Y = abs(X), abs(Y)
+if X + Y > N:
+    print("No")
+else:
+    if (N - X - Y) % 2 == 0:
+        print("Yes")
+    else:
+        print("No")
