@@ -1,8 +1,8 @@
 class Node:
     def __init__(self):
         self.nextNode = dict()
-        self.isY = False
-        self.endXCount = 0
+        self.isX = False
+        self.endYCount = 0
 
 class TrieTree:
     def __init__(self):
@@ -11,7 +11,8 @@ class TrieTree:
     def addX(self, X: str)->bool:
         node = self.root
         for x in X:
-            nextNode = node.nextNode.get(x, Node())
+            nextNode: Node = node.nextNode.get(x, Node())
+            nextNode.isX = True
             node.nextNode[x] = nextNode
             node = nextNode
         node.endXCount += 1
