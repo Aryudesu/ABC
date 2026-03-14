@@ -50,9 +50,7 @@ for idx in range(N):
     elif l < r:
         graph[data[idx][1]] = data[idx-1][1]
     else:
-        nl = data[idx-1][1]
-        nr = data[idx+1][1]
-        graph[data[idx][1]] = min(nl, nr)
+        graph[data[idx][1]] = min(data[idx-1][1], data[idx+1][1])
 
 fg = FunctionalGraph(graph, S-1)
 print(fg.kth(Q) + 1)
