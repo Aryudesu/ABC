@@ -1,0 +1,1 @@
+print("No" if len(input())%5 else "Yes")
