@@ -1,17 +1,21 @@
-from sortedcontainers import SortedList
+from heapq import heappush, heappop
 
 Q = int(input())
-data = SortedList()
+data = []
 result = []
 minus = 0
 for _ in range(Q):
     n, h = map(int, input().split())
     if n == 1:
-        data.add(h)
+        heappush(data, h)
     elif n == 2:
-        minus = data.bisect_right(h)
+        while data:
+            t = heappop(data)
+            if t > h:
+                heappush(data, t)
+                break
     else:
         raise ValueError()
-    result.append(len(data) - minus)
+    result.append(len(data))
 for r in result:
     print(r)
