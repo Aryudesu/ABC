@@ -36,11 +36,17 @@ class Graph:
 
 N = int(input())
 S = input()
-graph = Graph(N)
+depth = [1] * N
+topologicalGraph = Graph(N)
+
 for i in range(N-1):
     if S[i] == "A":
-        graph.add_edge(i, i+1)
+        topologicalGraph.add_edge(i, i+1)
     else:
-        graph.add_edge(i+1, i)
-data = graph.sort()
-print(data)
+        topologicalGraph.add_edge(i+1, i)
+data = topologicalGraph.sort()
+for node in data:
+    nextNodes = topologicalGraph.graph[node]
+    for nextNode in nextNodes:
+        depth[nextNode] = max(depth[nextNode], depth[node] + 1)
+print(sum(depth))

@@ -16,6 +16,4 @@ for n in range(N):
     x, y = map(int, input().split())
     X.append(x)
     Y.append(y)
-result = calcAbsDiffSum(X)
-result += calcAbsDiffSum(Y)
-print(result)
+print(calcAbsDiffSum(X) + calcAbsDiffSum(Y))
