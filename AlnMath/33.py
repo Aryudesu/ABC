@@ -1,40 +1,188 @@
-def calcABC(x0, y0, x1, y1):
-    dx = x0 - x1
-    dy = y0 - y1
-    a = -dy
-    b = dx
-    c = -dx * y0 + dy * x0
-    return a, b, c
+from enum import IntEnum
 
-def calcVerticalABC(x0, y0, dx, dy):
-    a = dx
-    b = dy
-    c = -dx * x0 - dy * y0
-    return a, b, c
+Point = tuple[int, int]
+Line = tuple[int, int, int]
+Segment = tuple[Point, Point]
 
-def calcDist(x0, y0, x1, y1, x2, y2):
-    if y1 == y2:
-        if min([x1, x2]) <= x0 and x0 <= max([x1, x2]):
-            return abs(y0 - y2)
-        return min([(x0 - x1) ** 2 + (y0 - y1) ** 2, (x0 - x2) ** 2 + (y0 - y2) ** 2]) ** 0.5
-    if x1 == x2:
-        if min([y1, y2]) <= y0 and y0 <= max([y1, y2]):
-            return abs(x0 - x2)
-        return min([(x0 - x1) ** 2 + (y0 - y1) ** 2, (x0 - x2) ** 2 + (y0 - y2) ** 2]) ** 0.5
-    a, b, c = calcABC(x1, y1, x2, y2)
-    d, e, f = calcVerticalABC(x0, y0, x1 - x2, y1 - y2)
-    print(a, b, c, d, e, f)
-    afcd = a*f - c*d
-    bdae = b * d - a * e
-    if bdae < 0:
-        afcd = -afcd
-        bdae = -bdae
-    print(afcd, bdae, afcd/bdae)
-    if min([y1, y2]) * bdae <= afcd and afcd <= max([y1, y2]) * bdae:
-        return abs(a * x0 + b * y0 + c)/((a ** 2 + b ** 2)**0.5)
-    return min([(x0 - x1) ** 2 + (y0 - y1) ** 2, (x0 - x2) ** 2 + (y0 - y2) ** 2]) ** 0.5
+class PointUtil:
+    @staticmethod
+    def add(p: Point, q: Point) -> Point:
+        return p[0] + q[0], p[1] + q[1]
 
-x0, y0 = [int(l) for l in input().split()]
-x1, y1 = [int(l) for l in input().split()]
-x2, y2 = [int(l) for l in input().split()]
-print(calcDist(x0, y0, x1, y1, x2, y2))
+    @staticmethod
+    def sub(p: Point, q: Point) -> Point:
+        return p[0] - q[0], p[1] - q[1]
+
+    @staticmethod
+    def dot(p: Point, q: Point) -> int:
+        return p[0] * q[0] + p[1] * q[1]
+
+    @staticmethod
+    def cross(p: Point, q: Point) -> int:
+        return p[0] * q[1] - p[1] * q[0]
+
+    @staticmethod
+    def orient(a: Point, b: Point, c: Point) -> int:
+        """
+        正: 反時計回り
+        負: 時計回り
+        0: 一直線上
+        """
+        return PointUtil.cross(
+            PointUtil.sub(b, a),
+            PointUtil.sub(c, a),
+        )
+
+    @staticmethod
+    def norm2(p: Point) -> int:
+        return PointUtil.dot(p, p)
+
+    @staticmethod
+    def distance2(p: Point, q: Point) -> int:
+        return PointUtil.norm2(PointUtil.sub(p, q))
+
+
+class SegmentIntersection(IntEnum):
+    NONE = 0
+    TOUCH = 1
+    CROSS = 2
+    OVERLAP = 3
+
+
+class SegmentUtil:
+    @staticmethod
+    def contains(segment: Segment, p: Point) -> bool:
+        a, b = segment
+
+        if PointUtil.orient(a, b, p) != 0:
+            return False
+
+        return (
+            min(a[0], b[0]) <= p[0] <= max(a[0], b[0])
+            and min(a[1], b[1]) <= p[1] <= max(a[1], b[1])
+        )
+
+    @staticmethod
+    def intersection_type(
+        segment1: Segment,
+        segment2: Segment,
+    ) -> SegmentIntersection:
+        a, b = segment1
+        c, d = segment2
+
+        o1 = PointUtil.orient(a, b, c)
+        o2 = PointUtil.orient(a, b, d)
+        o3 = PointUtil.orient(c, d, a)
+        o4 = PointUtil.orient(c, d, b)
+
+        if o1 == o2 == o3 == o4 == 0:
+            return SegmentUtil._collinear_intersection_type(
+                segment1,
+                segment2,
+            )
+
+        if o1 * o2 < 0 and o3 * o4 < 0:
+            return SegmentIntersection.CROSS
+
+        if (
+            (o1 == 0 and SegmentUtil.contains(segment1, c))
+            or (o2 == 0 and SegmentUtil.contains(segment1, d))
+            or (o3 == 0 and SegmentUtil.contains(segment2, a))
+            or (o4 == 0 and SegmentUtil.contains(segment2, b))
+        ):
+            return SegmentIntersection.TOUCH
+
+        return SegmentIntersection.NONE
+
+    @staticmethod
+    def _collinear_intersection_type(
+        segment1: Segment,
+        segment2: Segment,
+    ) -> SegmentIntersection:
+        a, b = segment1
+        c, d = segment2
+
+        # x方向に長さがあればx座標、それ以外はy座標で比較
+        if a[0] != b[0] or c[0] != d[0]:
+            left = max(min(a[0], b[0]), min(c[0], d[0]))
+            right = min(max(a[0], b[0]), max(c[0], d[0]))
+        else:
+            left = max(min(a[1], b[1]), min(c[1], d[1]))
+            right = min(max(a[1], b[1]), max(c[1], d[1]))
+
+        if left > right:
+            return SegmentIntersection.NONE
+        if left == right:
+            return SegmentIntersection.TOUCH
+        return SegmentIntersection.OVERLAP
+
+    @staticmethod
+    def intersects(
+        segment1: Segment,
+        segment2: Segment,
+    ) -> bool:
+        return (
+            SegmentUtil.intersection_type(segment1, segment2)
+            != SegmentIntersection.NONE
+        )
+
+    @staticmethod
+    def properly_intersects(
+        segment1: Segment,
+        segment2: Segment,
+    ) -> bool:
+        return (
+            SegmentUtil.intersection_type(segment1, segment2)
+            == SegmentIntersection.CROSS
+        )
+
+    @staticmethod
+    def distance_to_point(
+        segment: Segment,
+        p: Point,
+    ) -> float:
+        a, b = segment
+
+        ab = PointUtil.sub(b, a)
+        ap = PointUtil.sub(p, a)
+
+        length2 = PointUtil.norm2(ab)
+
+        if length2 == 0:
+            return PointUtil.distance2(a, p) ** 0.5
+
+        projection = PointUtil.dot(ap, ab)
+
+        if projection <= 0:
+            return PointUtil.distance2(a, p) ** 0.5
+
+        if projection >= length2:
+            return PointUtil.distance2(b, p) ** 0.5
+
+        return abs(PointUtil.cross(ab, ap)) / length2 ** 0.5
+
+    @staticmethod
+    def distance(
+        segment1: Segment,
+        segment2: Segment,
+    ) -> float:
+        if SegmentUtil.intersects(segment1, segment2):
+            return 0.0
+
+        a, b = segment1
+        c, d = segment2
+
+        return min(
+            SegmentUtil.distance_to_point(segment1, c),
+            SegmentUtil.distance_to_point(segment1, d),
+            SegmentUtil.distance_to_point(segment2, a),
+            SegmentUtil.distance_to_point(segment2, b),
+        )
+
+ax, ay = map(int, input().split())
+bx, by = map(int, input().split())
+cx, cy = map(int, input().split())
+
+bc: Segment = ((bx, by), (cx, cy))
+a: Point = (ax, ay)
+print(SegmentUtil.distance_to_point(bc, a))
