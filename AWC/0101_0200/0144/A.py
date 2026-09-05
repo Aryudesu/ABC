@@ -1,0 +1,5 @@
+N, M = map(int, input().split())
+L = list(map(int, input().split()))
+S = list(map(int, input().split()))
+mn = min(L)
+print(sum(mn >= s for s in S))
