@@ -1,0 +1,6 @@
+N, M, K = map(int, input().split())
+E = min(N, K)
+W = list(map(int, input().split()))
+R = list(map(int, input().split()))
+W.sort()
+print("Yes" if sum(R) <= sum(W[-K:]) else "No")
